@@ -1,17 +1,14 @@
-//
-//  ForestPointsApp.swift
-//  ForestPoints
-//
-//  Created by Yuliya Lapenak on 12/14/25.
-//
-
 import SwiftUI
 
 @main
 struct ForestPointsApp: App {
+    init() {
+        _ = CollectionService.shared
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView()
         }
     }
 }

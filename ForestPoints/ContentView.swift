@@ -1,9 +1,3 @@
-//
-//  ContentView.swift
-//  ForestPoints
-//
-//  Created by Yuliya Lapenak on 12/14/25.
-//
 
 import SwiftUI
 
