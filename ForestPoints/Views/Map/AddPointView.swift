@@ -1,23 +1,218 @@
 import SwiftUI
+import PhotosUI
 
 struct AddPointView: View {
     @Environment(\.dismiss) private var dismiss
     
+    let point: ForestPoint?
+    
+    @State private var selectedImageData: Data?
+    @State private var selectedImageItem: PhotosPickerItem?
+    @State private var selectedType: PointType = .clearing
+    @State private var name = ""
+    @State private var coordinates = ""
+    @State private var showTypePicker = false
+    
+    init(point: ForestPoint? = nil) {
+        self.point = point
+    }
+    
+    var isFormValid: Bool {
+        !name.isEmpty && !coordinates.isEmpty
+    }
+    
     var body: some View {
-        VStack(spacing: 0) {
-            HeaderView(title: "ADD ENTRY") {
-                dismiss()
+        ZStack {
+            VStack(spacing: 0) {
+                HStack(spacing: 16) {
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Image(.back)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 104, height: 101)
+                    }
+                    
+                    ZStack {
+                        Image(.headerBg)
+                            .resizable()
+                            .frame(width: 229, height: 128)
+                        
+                        AttributedTextLabel(
+                            attributedString: createAttributedString(
+                                from: "Add Entry",
+                                fontSize: 35,
+                                lineHeight: 40,
+                                lineSpacing: 0,
+                                letterSpacing: -0.41
+                            )
+                        )
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 20) {
+                        PhotosPicker(selection: $selectedImageItem, matching: .images) {
+                            photoPicker
+                        }
+                        
+                        typePickerView
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Name")
+                                .font(.signikaSC(size: 16))
+                                .foregroundColor(.white.opacity(0.6))
+                                .padding(.leading, 20)
+                            
+                            TextField("", text: $name, prompt: Text("Text..").foregroundColor(.white.opacity(0.4)))
+                                .font(.signikaSC(size: 20))
+                                .foregroundColor(.white)
+                                .padding(.vertical, 16)
+                                .padding(.horizontal, 20)
+                                .background(Color.greenLight)
+                                .cornerRadius(20)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Coordinates")
+                                .font(.signikaSC(size: 16))
+                                .foregroundColor(.white.opacity(0.6))
+                                .padding(.leading, 20)
+                            
+                            TextField("", text: $coordinates, prompt: Text("Text..").foregroundColor(.white.opacity(0.4)))
+                                .font(.signikaSC(size: 20))
+                                .foregroundColor(.white)
+                                .padding(.vertical, 16)
+                                .padding(.horizontal, 20)
+                                .background(Color.greenLight)
+                                .cornerRadius(20)
+                        }
+                    }
+                    .padding(20)
+                    .background(Color.greenBg)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 40)
+                            .stroke(Color.greenBorder, lineWidth: 1)
+                    )
+                    .cornerRadius(40)
+                    .padding(.horizontal, 20)
+                }
+                
+                Button(action: {
+                    savePoint()
+                }) {
+                    Image(isFormValid ? .doneButton : .doneButtonOff)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 112, height: 108)
+                }
+                .disabled(!isFormValid)
+                .padding(.top, 16)
+                .padding(.bottom, 20)
             }
-            
-            Spacer()
-            
-            Text("Add Point Form")
-                .font(.signikaSC(size: 24))
+            .bgSetup()
+        }
+        .onChange(of: selectedImageItem) { newValue in
+            Task {
+                if let newValue = newValue {
+                    if let data = try? await newValue.loadTransferable(type: Data.self) {
+                        selectedImageData = data
+                    }
+                }
+            }
+        }
+        .onAppear {
+            if let point = point {
+                selectedImageData = point.imageData
+                selectedType = point.type
+                name = point.name
+                coordinates = point.coordinates
+            }
+        }
+    }
+    
+    private var photoPicker: some View {
+        ZStack {
+            if let imageData = selectedImageData, let uiImage = UIImage(data: imageData) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 120, height: 120)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+            } else {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color.greenLight)
+                    .frame(width: 120, height: 120)
+                    .overlay(
+                        Image(.camera)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 121, height: 117)
+                    )
+            }
+        }
+    }
+    
+    private var typePickerView: some View {
+        HStack(spacing: 10) {
+            Text("Type")
+                .font(.signikaSC(size: 25))
                 .foregroundColor(.white)
             
             Spacer()
+            
+            Button {
+                showTypePicker = true
+            } label: {
+                ZStack(alignment: .center) {
+                    Color.yellowButton
+                    
+                    AttributedTextLabel(
+                        attributedString: createAttributedString(
+                            from: "Choose",
+                            fontSize: 22,
+                            lineHeight: 22,
+                            lineSpacing: 0,
+                            letterSpacing: -0.41
+                        )
+                    )
+                    .fixedSize()
+                    .frame(height: 63)
+                }
+                .frame(width: 96, height: 63)
+                .cornerRadius(20)
+            }
         }
-        .bgSetup()
+        .frame(height: 83)
+        .padding(.horizontal, 13)
+        .background(Color.greenLight)
+        .cornerRadius(25)
+        .sheet(isPresented: $showTypePicker) {
+            TypePickerView(selectedType: $selectedType)
+        }
+    }
+    
+    private func savePoint() {
+        let collections = CollectionService.shared.getAll()
+        let randomCollection = collections.randomElement()
+        
+        let newPoint = ForestPoint(
+            id: point?.id ?? UUID(),
+            imageData: selectedImageData,
+            type: selectedType,
+            name: name,
+            coordinates: coordinates,
+            notes: "",
+            isFavourite: point?.isFavourite ?? false,
+            markAsType: point?.markAsType,
+            collectionId: randomCollection?.id
+        )
+        
+        ForestPointService.shared.save(newPoint)
+        dismiss()
     }
 }
-

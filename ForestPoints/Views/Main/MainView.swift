@@ -27,6 +27,7 @@ struct MainView: View {
                 }
                 .bgSetup()
             }
+            .toolbar(.hidden, for: .navigationBar)
         }
     }
 }
