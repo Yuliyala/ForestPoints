@@ -2,9 +2,11 @@ import SwiftUI
 
 struct CollectionsView: View {
     var body: some View {
-        Text("Collections View")
-            .font(.signikaSC(size: 24))
-            .foregroundColor(.white)
+        VStack(spacing: 0) {
+            HeaderView(title: "Forest Points\nCatalog")
+            
+            Spacer()
+        }
     }
 }
 
