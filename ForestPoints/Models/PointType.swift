@@ -1,24 +1,35 @@
 import Foundation
+import SwiftUI
 
 enum PointType: String, Codable, CaseIterable {
+    case restArea
     case clearing
     case spring
-    case restArea
     case mushroomSpot
-    case oldPine
     
     var title: String {
         switch self {
-        case .clearing:
-            "CLEARING"
-        case .spring:
-            "SPRING"
         case .restArea:
-            "REST AREA"
+            "Rest Area"
+        case .clearing:
+            "Clearing"
+        case .spring:
+            "Spring"
         case .mushroomSpot:
-            "MUSHROOM SPOT"
-        case .oldPine:
-            "OLD PINE"
+            "Mushroom Spot"
+        }
+    }
+    
+    var image: ImageResource {
+        switch self {
+        case .restArea:
+            .restIcon
+        case .clearing:
+            .clearing
+        case .spring:
+            .spring
+        case .mushroomSpot:
+            .mushroom
         }
     }
 }

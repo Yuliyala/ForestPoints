@@ -9,5 +9,6 @@ extension Color {
     static let brownBorder = Color(red: 0.4, green: 0.3, blue: 0.2)
     static let redBorder = Color(red: 0.6, green: 0.2, blue: 0.2)
     static let yellowButton = Color(red: 245/255, green: 179/255, blue: 13/255)
+    static let greenOverlay = Color(red: 30/255, green: 49/255, blue: 0/255).opacity(0.86)
 }
 

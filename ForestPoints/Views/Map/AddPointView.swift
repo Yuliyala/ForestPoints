@@ -9,6 +9,7 @@ struct AddPointView: View {
     @State private var selectedImageData: Data?
     @State private var selectedImageItem: PhotosPickerItem?
     @State private var selectedType: PointType = .clearing
+    @State private var isTypeChosen: Bool = false
     @State private var name = ""
     @State private var coordinates = ""
     @State private var showTypePicker = false
@@ -115,6 +116,33 @@ struct AddPointView: View {
                 .padding(.bottom, 20)
             }
             .bgSetup()
+            
+            // Type Picker Overlay
+            if showTypePicker {
+                Color.black.opacity(0.5)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        showTypePicker = false
+                    }
+                
+                VStack {
+                    Spacer()
+                    
+                    TypePickerView(
+                        selectedType: $selectedType,
+                        onDismiss: {
+                            showTypePicker = false
+                        },
+                        onConfirm: {
+                            isTypeChosen = true
+                        }
+                    )
+                    .padding(.horizontal, 16)
+                    
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
         }
         .onChange(of: selectedImageItem) { newValue in
             Task {
@@ -129,6 +157,7 @@ struct AddPointView: View {
             if let point = point {
                 selectedImageData = point.imageData
                 selectedType = point.type
+                isTypeChosen = true
                 name = point.name
                 coordinates = point.coordinates
             }
@@ -173,7 +202,7 @@ struct AddPointView: View {
                     
                     AttributedTextLabel(
                         attributedString: createAttributedString(
-                            from: "Choose",
+                            from: isTypeChosen ? "Choosen" : "Choose",
                             fontSize: 22,
                             lineHeight: 22,
                             lineSpacing: 0,
@@ -191,9 +220,6 @@ struct AddPointView: View {
         .padding(.horizontal, 13)
         .background(Color.greenLight)
         .cornerRadius(25)
-        .sheet(isPresented: $showTypePicker) {
-            TypePickerView(selectedType: $selectedType)
-        }
     }
     
     private func savePoint() {
