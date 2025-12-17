@@ -25,124 +25,13 @@ struct AddPointView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                HStack(spacing: 16) {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image(.back)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 104, height: 101)
-                    }
-                    
-                    ZStack {
-                        Image(.headerBg)
-                            .resizable()
-                            .frame(width: 229, height: 128)
-                        
-                        AttributedTextLabel(
-                            attributedString: createAttributedString(
-                                from: "Add Entry",
-                                fontSize: 35,
-                                lineHeight: 40,
-                                lineSpacing: 0,
-                                letterSpacing: -0.41
-                            )
-                        )
-                    }
-                    
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 20) {
-                        PhotosPicker(selection: $selectedImageItem, matching: .images) {
-                            photoPicker
-                        }
-                        
-                        typePickerView
-                        
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Name")
-                                .font(.signikaSC(size: 16))
-                                .foregroundColor(.white.opacity(0.6))
-                                .padding(.leading, 20)
-                            
-                            TextField("", text: $name, prompt: Text("Text..").foregroundColor(.white.opacity(0.4)))
-                                .font(.signikaSC(size: 20))
-                                .foregroundColor(.white)
-                                .padding(.vertical, 16)
-                                .padding(.horizontal, 20)
-                                .background(Color.greenLight)
-                                .cornerRadius(20)
-                        }
-                        
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Coordinates")
-                                .font(.signikaSC(size: 16))
-                                .foregroundColor(.white.opacity(0.6))
-                                .padding(.leading, 20)
-                            
-                            TextField("", text: $coordinates, prompt: Text("Text..").foregroundColor(.white.opacity(0.4)))
-                                .font(.signikaSC(size: 20))
-                                .foregroundColor(.white)
-                                .padding(.vertical, 16)
-                                .padding(.horizontal, 20)
-                                .background(Color.greenLight)
-                                .cornerRadius(20)
-                        }
-                    }
-                    .padding(20)
-                    .background(Color.greenBg)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 40)
-                            .stroke(Color.greenBorder, lineWidth: 1)
-                    )
-                    .cornerRadius(40)
-                    .padding(.horizontal, 20)
-                }
-                
-                Button(action: {
-                    savePoint()
-                }) {
-                    Image(isFormValid ? .doneButton : .doneButtonOff)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 112, height: 108)
-                }
-                .disabled(!isFormValid)
-                .padding(.top, 16)
-                .padding(.bottom, 20)
+                headerSection
+                contentScrollView
+                saveButton
             }
             .bgSetup()
             
-            // Type Picker Overlay
-            if showTypePicker {
-                Color.black.opacity(0.5)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        showTypePicker = false
-                    }
-                
-                VStack {
-                    Spacer()
-                    
-                    TypePickerView(
-                        selectedType: $selectedType,
-                        onDismiss: {
-                            showTypePicker = false
-                        },
-                        onConfirm: {
-                            isTypeChosen = true
-                        }
-                    )
-                    .padding(.horizontal, 16)
-                    
-                    Spacer()
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
+            typePickerOverlay
         }
         .onChange(of: selectedImageItem) { newValue in
             Task {
@@ -174,6 +63,139 @@ struct AddPointView: View {
                 name = point.name
                 coordinates = point.coordinates
             }
+        }
+    }
+    
+    private var headerSection: some View {
+        HStack(spacing: 16) {
+            Button(action: {
+                dismiss()
+            }) {
+                Image(.back)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 104, height: 101)
+            }
+            
+            ZStack {
+                Image(.headerBg)
+                    .resizable()
+                    .frame(width: 229, height: 128)
+                
+                AttributedTextLabel(
+                    attributedString: createAttributedString(
+                        from: "Add Entry",
+                        fontSize: 35,
+                        lineHeight: 40,
+                        lineSpacing: 0,
+                        letterSpacing: -0.41
+                    )
+                )
+            }
+            
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+    }
+    
+    private var contentScrollView: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 20) {
+                PhotosPicker(selection: $selectedImageItem, matching: .images) {
+                    photoPicker
+                }
+                
+                typePickerView
+                
+                nameInputField
+                
+                coordinatesInputField
+            }
+            .padding(20)
+            .background(Color.greenBg)
+            .overlay(
+                RoundedRectangle(cornerRadius: 40)
+                    .stroke(Color.greenBorder, lineWidth: 1)
+            )
+            .cornerRadius(40)
+            .padding(.horizontal, 20)
+        }
+    }
+    
+    private var nameInputField: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Name")
+                .font(.signikaBold(size: 16))
+                .foregroundColor(.white.opacity(0.6))
+                .padding(.leading, 20)
+            
+            TextField("", text: $name, prompt: Text("Text..").foregroundColor(.white.opacity(0.4)))
+                .font(.signikaBold(size: 20))
+                .foregroundColor(.white)
+                .padding(.vertical, 16)
+                .padding(.horizontal, 20)
+                .background(Color.greenLight)
+                .cornerRadius(20)
+        }
+    }
+    
+    private var coordinatesInputField: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Coordinates")
+                .font(.signikaBold(size: 16))
+                .foregroundColor(.white.opacity(0.6))
+                .padding(.leading, 20)
+            
+            TextField("", text: $coordinates, prompt: Text("Text..").foregroundColor(.white.opacity(0.4)))
+                .font(.signikaBold(size: 20))
+                .foregroundColor(.white)
+                .padding(.vertical, 16)
+                .padding(.horizontal, 20)
+                .background(Color.greenLight)
+                .cornerRadius(20)
+        }
+    }
+    
+    private var saveButton: some View {
+        Button(action: {
+            savePoint()
+        }) {
+            Image(isFormValid ? .doneButton : .doneButtonOff)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 112, height: 108)
+        }
+        .disabled(!isFormValid)
+        .padding(.top, 16)
+        .padding(.bottom, 20)
+    }
+    
+    @ViewBuilder
+    private var typePickerOverlay: some View {
+        if showTypePicker {
+            Color.black.opacity(0.5)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    showTypePicker = false
+                }
+            
+            VStack {
+                Spacer()
+                
+                TypePickerView(
+                    selectedType: $selectedType,
+                    onDismiss: {
+                        showTypePicker = false
+                    },
+                    onConfirm: {
+                        isTypeChosen = true
+                    }
+                )
+                .padding(.horizontal, 16)
+                
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
     
@@ -210,7 +232,7 @@ struct AddPointView: View {
     private var typePickerView: some View {
         HStack(spacing: 10) {
             Text("Type")
-                .font(.signikaSC(size: 25))
+                .font(.signikaBold(size: 25))
                 .foregroundColor(.white)
             
             Spacer()

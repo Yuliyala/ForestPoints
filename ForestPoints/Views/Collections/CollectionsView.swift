@@ -99,7 +99,7 @@ struct CollectionsView: View {
                 showAddCollection = true
             } label: {
                 Text("ADD\nCOLLECTION")
-                    .font(.signikaSCBold(size: 20))
+                    .font(.signikaBold(size: 20))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .frame(width: 178, height: 64)
@@ -141,7 +141,7 @@ struct CollectionCardView: View {
             }
             
             Text(collection.title.uppercased())
-                .font(.signikaSCBold(size: 16))
+                .font(.signikaBold(size: 16))
                 .foregroundColor(.white)
                 .lineLimit(2)
                 .multilineTextAlignment(.center)

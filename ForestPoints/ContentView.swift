@@ -8,7 +8,7 @@ struct ContentView: View {
                 .imageScale(.large)
                 .foregroundStyle(.tint)
             Text("Hello, world!")
-                .font(.signikaSC(size: 24))
+                .font(.signikaBold(size: 24))
         }
         .padding()
     }

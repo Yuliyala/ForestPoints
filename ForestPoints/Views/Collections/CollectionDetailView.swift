@@ -20,12 +20,12 @@ struct CollectionDetailView: View {
                     Spacer()
                     
                     Text("No points in\nthis collection")
-                        .font(.signikaSCBold(size: 28))
+                        .font(.signikaBold(size: 28))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                     
                     Text("Add forest points to see them here")
-                        .font(.signikaSC(size: 16))
+                        .font(.signikaBold(size: 16))
                         .foregroundColor(.white.opacity(0.7))
                         .multilineTextAlignment(.center)
                     
@@ -81,13 +81,13 @@ struct PointCardView: View {
             
             VStack(spacing: 8) {
                 Text(point.name)
-                    .font(.signikaSCBold(size: 16))
+                    .font(.signikaBold(size: 16))
                     .foregroundColor(.white)
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
                 
                 Text(point.type.title)
-                    .font(.signikaSC(size: 12))
+                    .font(.signikaBold(size: 12))
                     .foregroundColor(.white.opacity(0.6))
             }
             .padding(.vertical, 8)

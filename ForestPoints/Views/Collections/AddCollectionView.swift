@@ -14,81 +14,12 @@ struct AddCollectionView: View {
     
     var body: some View {
         ZStack {
-                VStack(spacing: 0) {
-                    HStack(spacing: 16) {
-                        Button(action: {
-                            dismiss()
-                        }) {
-                            Image(.back)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 104, height: 101)
-                        }
-                        
-                        ZStack {
-                            Image(.headerBg)
-                                .resizable()
-                                .frame(width: 229, height: 128)
-                            
-                            AttributedTextLabel(
-                                attributedString: createAttributedString(
-                                    from: "ADD\nCOLLECTION",
-                                    fontSize: 30,
-                                    lineHeight: 34,
-                                    lineSpacing: 0,
-                                    letterSpacing: -0.41
-                                )
-                            )
-                        }
-                        
-                        Spacer()
-                    }
-                    .padding(.horizontal, 16)
-                    
-                    ScrollView(showsIndicators: false) {
-                        VStack(spacing: 20) {
-                            PhotosPicker(selection: $selectedImageItem, matching: .images) {
-                                photoPicker
-                            }
-                            
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("TITLE")
-                                    .font(.signikaSC(size: 16))
-                                    .foregroundColor(.white.opacity(0.6))
-                                    .padding(.leading, 20)
-                                
-                                TextField("", text: $name, prompt: Text("Text..").foregroundColor(.white.opacity(0.4)))
-                                    .font(.signikaSC(size: 20))
-                                    .foregroundColor(.white)
-                                    .padding(.vertical, 16)
-                                    .padding(.horizontal, 20)
-                                    .background(Color.greenLight)
-                                    .cornerRadius(20)
-                            }
-                        }
-                        .padding(20)
-                        .background(Color.greenBg)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 40)
-                                .stroke(Color.greenBorder, lineWidth: 1)
-                        )
-                        .cornerRadius(40)
-                        .padding(.horizontal, 20)
-                    }
-                    
-                    Button(action: {
-                        saveCollection()
-                    }) {
-                        Image(isFormValid ? .doneButton : .doneButtonOff)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 112, height: 108)
-                    }
-                    .disabled(!isFormValid)
-                    .padding(.top, 16)
-                    .padding(.bottom, 20)
-                }
-                .bgSetup()
+            VStack(spacing: 0) {
+                headerSection
+                contentScrollView
+                saveButton
+            }
+            .bgSetup()
         }
         .onChange(of: selectedImageItem) { newValue in
             Task {
@@ -99,6 +30,89 @@ struct AddCollectionView: View {
                 }
             }
         }
+    }
+    
+    private var headerSection: some View {
+        HStack(spacing: 16) {
+            Button(action: {
+                dismiss()
+            }) {
+                Image(.back)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 104, height: 101)
+            }
+            
+            ZStack {
+                Image(.headerBg)
+                    .resizable()
+                    .frame(width: 229, height: 128)
+                
+                AttributedTextLabel(
+                    attributedString: createAttributedString(
+                        from: "ADD\nCOLLECTION",
+                        fontSize: 30,
+                        lineHeight: 34,
+                        lineSpacing: 0,
+                        letterSpacing: -0.41
+                    )
+                )
+            }
+            
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+    }
+    
+    private var contentScrollView: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 20) {
+                PhotosPicker(selection: $selectedImageItem, matching: .images) {
+                    photoPicker
+                }
+                
+                titleInputField
+            }
+            .padding(20)
+            .background(Color.greenBg)
+            .overlay(
+                RoundedRectangle(cornerRadius: 40)
+                    .stroke(Color.greenBorder, lineWidth: 1)
+            )
+            .cornerRadius(40)
+            .padding(.horizontal, 20)
+        }
+    }
+    
+    private var titleInputField: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("TITLE")
+                .font(.signikaBold(size: 16))
+                .foregroundColor(.white.opacity(0.6))
+                .padding(.leading, 20)
+            
+            TextField("", text: $name, prompt: Text("Text..").foregroundColor(.white.opacity(0.4)))
+                .font(.signikaBold(size: 20))
+                .foregroundColor(.white)
+                .padding(.vertical, 16)
+                .padding(.horizontal, 20)
+                .background(Color.greenLight)
+                .cornerRadius(20)
+        }
+    }
+    
+    private var saveButton: some View {
+        Button(action: {
+            saveCollection()
+        }) {
+            Image(isFormValid ? .doneButton : .doneButtonOff)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 112, height: 108)
+        }
+        .disabled(!isFormValid)
+        .padding(.top, 16)
+        .padding(.bottom, 20)
     }
     
     private var photoPicker: some View {
