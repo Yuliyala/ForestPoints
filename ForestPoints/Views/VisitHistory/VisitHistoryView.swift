@@ -41,7 +41,7 @@ struct VisitHistoryView: View {
                             lineHeight: 26,
                             lineSpacing: 0,
                             letterSpacing: -0.41,
-                            fontName: "SignikaSC-Regular",
+                            fontName: "Signika-Bold",
                             alpha: 0.7
                         )
                     )

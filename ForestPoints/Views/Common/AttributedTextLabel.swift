@@ -24,7 +24,7 @@ func createAttributedString(
     lineHeight: CGFloat,
     lineSpacing: CGFloat,
     letterSpacing: CGFloat = 0,
-    fontName: String = "SignikaSC-Bold",
+    fontName: String = "Signika-Bold",
     alpha: CGFloat = 1.0
 ) -> NSAttributedString {
     let paragraphStyle = NSMutableParagraphStyle()
