@@ -257,7 +257,14 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "We need your location to mark forest points on the map";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to mark forest points on the map";
-				INFOPLIST_KEY_UIAppFonts = Fonts/SignikaSC.ttf;
+				INFOPLIST_KEY_UIAppFonts = (
+					Fonts/SignikaSC.ttf,
+					Fonts/Signika-Bold.ttf,
+					Fonts/Signika-Light.ttf,
+					Fonts/Signika-Medium.ttf,
+					Fonts/Signika-Regular.ttf,
+					Fonts/Signika-SemiBold.ttf,
+				);
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -289,7 +296,14 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "We need your location to mark forest points on the map";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to mark forest points on the map";
-				INFOPLIST_KEY_UIAppFonts = Fonts/SignikaSC.ttf;
+				INFOPLIST_KEY_UIAppFonts = (
+					Fonts/SignikaSC.ttf,
+					Fonts/Signika-Bold.ttf,
+					Fonts/Signika-Light.ttf,
+					Fonts/Signika-Medium.ttf,
+					Fonts/Signika-Regular.ttf,
+					Fonts/Signika-SemiBold.ttf,
+				);
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

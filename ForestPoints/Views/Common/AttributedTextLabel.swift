@@ -6,7 +6,7 @@ struct AttributedTextLabel: UIViewRepresentable {
     
     func makeUIView(context: Context) -> UILabel {
         let label = UILabel()
-        label.numberOfLines = 2
+        label.numberOfLines = 0
         label.textAlignment = .center
         label.setContentHuggingPriority(.required, for: .vertical)
         label.setContentCompressionResistancePriority(.required, for: .vertical)
@@ -23,7 +23,9 @@ func createAttributedString(
     fontSize: CGFloat,
     lineHeight: CGFloat,
     lineSpacing: CGFloat,
-    letterSpacing: CGFloat = 0
+    letterSpacing: CGFloat = 0,
+    fontName: String = "SignikaSC-Bold",
+    alpha: CGFloat = 1.0
 ) -> NSAttributedString {
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.lineSpacing = lineSpacing
@@ -32,9 +34,9 @@ func createAttributedString(
     paragraphStyle.alignment = .center
     
     let attributes: [NSAttributedString.Key: Any] = [
-        .font: UIFont(name: "Signika SC Bold", size: fontSize) ?? UIFont.systemFont(ofSize: fontSize, weight: .bold),
+        .font: UIFont(name: fontName, size: fontSize) ?? UIFont.systemFont(ofSize: fontSize, weight: .bold),
         .paragraphStyle: paragraphStyle,
-        .foregroundColor: UIColor.white,
+        .foregroundColor: UIColor.white.withAlphaComponent(alpha),
         .kern: letterSpacing
     ]
     

@@ -147,8 +147,21 @@ struct AddPointView: View {
         .onChange(of: selectedImageItem) { newValue in
             Task {
                 if let newValue = newValue {
-                    if let data = try? await newValue.loadTransferable(type: Data.self) {
-                        selectedImageData = data
+                    do {
+                        if let data = try await newValue.loadTransferable(type: Data.self) {
+                            await MainActor.run {
+                                selectedImageData = data
+                                print("Image loaded successfully, size: \(data.count) bytes")
+                            }
+                        } else {
+                            print("Failed to load image: data is nil")
+                        }
+                    } catch {
+                        print("Error loading image: \(error.localizedDescription)")
+                    }
+                } else {
+                    await MainActor.run {
+                        selectedImageData = nil
                     }
                 }
             }
@@ -165,24 +178,32 @@ struct AddPointView: View {
     }
     
     private var photoPicker: some View {
-        ZStack {
-            if let imageData = selectedImageData, let uiImage = UIImage(data: imageData) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 120, height: 120)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-            } else {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color.greenLight)
-                    .frame(width: 120, height: 120)
-                    .overlay(
-                        Image(.camera)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 121, height: 117)
-                    )
+        ZStack(alignment: .center) {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.greenLight)
+                .frame(width: 120, height: 120)
+            
+            if let imageData = selectedImageData {
+                if let uiImage = UIImage(data: imageData) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 120, height: 120)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                } else {
+                    Text("Invalid image")
+                        .foregroundColor(.red)
+                        .font(.caption)
+                }
             }
+            
+            Image(.camera)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 121, height: 117)
+        }
+        .onAppear {
+            print("photoPicker appeared, selectedImageData: \(selectedImageData != nil ? "exists (\(selectedImageData!.count) bytes)" : "nil")")
         }
     }
     
