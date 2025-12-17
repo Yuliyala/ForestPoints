@@ -8,22 +8,10 @@
 
 /* Begin PBXFileReference section */
 		B233ECC22EEE936F008B6C51 /* ForestPoints.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForestPoints.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B233EDDD2EEE9999008B6C51 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		B233ECC42EEE936F008B6C51 /* ForestPoints */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				B233EDDE2EEE9999008B6C51 /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
-			);
-			path = ForestPoints;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
-
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B233EDDE2EEE9999008B6C51 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		B233EDDE2EEE9999008B6C51 /* Exceptions for "ForestPoints" folder in "ForestPoints" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -31,6 +19,17 @@
 			target = B233ECC12EEE936F008B6C51 /* ForestPoints */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		B233ECC42EEE936F008B6C51 /* ForestPoints */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B233EDDE2EEE9999008B6C51 /* Exceptions for "ForestPoints" folder in "ForestPoints" target */,
+			);
+			path = ForestPoints;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B233ECBF2EEE936F008B6C51 /* Frameworks */ = {

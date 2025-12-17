@@ -3,6 +3,7 @@ import PhotosUI
 
 struct AddPointView: View {
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var locationManager = LocationManager.shared
     
     let point: ForestPoint?
     
@@ -19,7 +20,7 @@ struct AddPointView: View {
     }
     
     var isFormValid: Bool {
-        !name.isEmpty && !coordinates.isEmpty
+        !name.isEmpty
     }
     
     var body: some View {
@@ -56,6 +57,10 @@ struct AddPointView: View {
             }
         }
         .onAppear {
+            // Запрашиваем геолокацию
+            locationManager.requestPermission()
+            locationManager.startUpdating()
+            
             if let point = point {
                 selectedImageData = point.imageData
                 selectedType = point.type
@@ -63,6 +68,9 @@ struct AddPointView: View {
                 name = point.name
                 coordinates = point.coordinates
             }
+        }
+        .onDisappear {
+            locationManager.stopUpdating()
         }
     }
     
@@ -269,12 +277,18 @@ struct AddPointView: View {
         let collections = CollectionService.shared.getAll()
         let randomCollection = collections.randomElement()
         
+        // Fallback на текущие координаты если ввод некорректный или пустой
+        var finalCoordinates = coordinates
+        if coordinates.isEmpty || !isValidCoordinates(coordinates) {
+            finalCoordinates = locationManager.getCurrentCoordinatesString()
+        }
+        
         let newPoint = ForestPoint(
             id: point?.id ?? UUID(),
             imageData: selectedImageData,
             type: selectedType,
             name: name,
-            coordinates: coordinates,
+            coordinates: finalCoordinates,
             notes: "",
             isFavourite: point?.isFavourite ?? false,
             markAsType: point?.markAsType,
@@ -283,5 +297,12 @@ struct AddPointView: View {
         
         ForestPointService.shared.save(newPoint)
         dismiss()
+    }
+    
+    private func isValidCoordinates(_ coords: String) -> Bool {
+        // Используем существующий метод парсинга из модели
+        let tempPoint = ForestPoint(coordinates: coords)
+        let parsed = tempPoint.parseCoordinates()
+        return parsed.latitude != nil && parsed.longitude != nil
     }
 }
