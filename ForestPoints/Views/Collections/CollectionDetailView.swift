@@ -2,24 +2,26 @@ import SwiftUI
 
 struct CollectionDetailView: View {
     @Environment(\.dismiss) private var dismiss
-    
+
     let collection: Collection
     @State private var showEditCollection = false
     @State private var showDeleteAlert = false
+    @State private var points: [ForestPoint] = []
     
     var body: some View {
         ZStack {
             VStack(spacing: 20) {
                 backButton
-                
-                contentCard
-                
+
+                collectionIconView
+
+                collectionDetailCard
+
                 Spacer()
-                
-                bottomButtons
             }
             .bgSetup()
         }
+        .onAppear(perform: loadPoints)
         .sheet(isPresented: $showEditCollection) {
             AddCollectionView(collection: collection)
         }
@@ -43,65 +45,116 @@ struct CollectionDetailView: View {
         .padding(.top, 20)
     }
     
-    private var contentCard: some View {
-        VStack(spacing: 16) {
-            if let imageData = collection.imageData,
-               let uiImage = UIImage(data: imageData) {
-                Image(uiImage: uiImage)
+    private var collectionIconView: some View {
+        ZStack {
+            Image(.collectionIcon)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 172, height: 125)
+                .clipShape(RoundedRectangle(cornerRadius: 25))
+
+            VStack(spacing: 8) {
+                Spacer()
+
+                Image(defaultIcon(for: collection.title) ?? .collectionIcon)
                     .resizable()
-                    .scaledToFill()
-                    .frame(width: 308, height: 224)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-            } else {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color.greenLight)
-                    .frame(width: 308, height: 224)
+                    .scaledToFit()
+                    .frame(width: 70, height: 70)
+
+                Text(collection.title.uppercased())
+                    .font(.signikaBold(size: 22))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+
+                Spacer()
             }
-            
-            Text(collection.title.uppercased())
-                .font(.signikaBold(size: 35))
-                .foregroundColor(.white)
-                .multilineTextAlignment(.leading)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
+            .frame(width: 172, height: 125)
         }
-        .frame(width: 350, height: 322)
+    }
+
+    private var collectionDetailCard: some View {
+        VStack(spacing: 8) {
+            collectionImage
+                .padding(.top, 12)
+
+            Text(displayedPointName)
+                .font(.signikaBold(size: 28))
+                .foregroundColor(.white)
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 12)
+        }
+        .frame(width: 310, height: 220)
         .background(
             RoundedRectangle(cornerRadius: 40)
                 .fill(Color.greenBg)
         )
-        .overlay(
-            RoundedRectangle(cornerRadius: 40)
-                .stroke(Color.greenBorder, lineWidth: 1)
-        )
-    }
-    
-    private var bottomButtons: some View {
-        HStack(spacing: 0) {
-            Button(action: {
+        .contextMenu {
+            Button("Edit Collection") {
                 showEditCollection = true
-            }) {
-                Image(.editButton)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 115, height: 117)
             }
-            
-            Button(action: {
+
+            Button("Delete Collection", role: .destructive) {
                 showDeleteAlert = true
-            }) {
-                Image(.deleteButton)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 115, height: 117)
             }
         }
-        .padding(.bottom, 20)
+    }
+
+    private var collectionImage: some View {
+        Group {
+            if let point = featuredPoint,
+               let imageData = point.imageData,
+               let uiImage = UIImage(data: imageData) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+            } else if let imageData = collection.imageData,
+                      let uiImage = UIImage(data: imageData) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                RoundedRectangle(cornerRadius: 30)
+                    .fill(Color.greenLight)
+                    .overlay(
+                        Image(.camera)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 60, height: 60)
+                    )
+            }
+        }
+        .frame(width: 278, height: 160)
+        .clipShape(RoundedRectangle(cornerRadius: 25))
+    }
+
+    private var featuredPoint: ForestPoint? {
+        points.first { $0.collectionId == collection.id }
+    }
+
+    private var displayedPointName: String {
+        featuredPoint?.name.uppercased() ?? "NO POINTS YET"
     }
     
     private func deleteCollection() {
         CollectionService.shared.delete(collection)
         dismiss()
+    }
+
+    private func loadPoints() {
+        points = ForestPointService.shared.getAll()
+    }
+
+    private func defaultIcon(for name: String) -> ImageResource? {
+        switch name.lowercased() {
+        case "views": return .view
+        case "observations": return .observations
+        case "pleasant places": return .pleasantPlaces
+        case "landmarks": return .landmarks
+        case "useful points": return .usefulPoints
+        default: return nil
+        }
     }
 
     @ViewBuilder
