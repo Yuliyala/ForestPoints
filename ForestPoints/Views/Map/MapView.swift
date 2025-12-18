@@ -79,6 +79,7 @@ struct MapView: View {
 struct MapPinView: View {
     let point: ForestPoint
     @State private var showDetail = false
+    @State private var navigateToDetail = false
     
     private enum Layout {
         static let cardWidth: CGFloat = 180
@@ -99,6 +100,15 @@ struct MapPinView: View {
                 detailCard
             }
         }
+        .background(
+            NavigationLink(
+                destination: PointDetailView(point: point),
+                isActive: $navigateToDetail
+            ) {
+                EmptyView()
+            }
+            .hidden()
+        )
     }
     
     private var pinButton: some View {
@@ -116,24 +126,28 @@ struct MapPinView: View {
     }
     
     private var detailCard: some View {
-        VStack(spacing: 8) {
-            photoView
-                .padding(.top, 12)
-            
-            Text(point.name.isEmpty ? "No name" : point.name)
-                .font(.signikaBold(size: 18))
-                .foregroundColor(.white)
-                .lineLimit(2)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 12)
+        Button(action: {
+            navigateToDetail = true
+        }) {
+            VStack(spacing: 8) {
+                photoView
+                    .padding(.top, 12)
+                
+                Text(point.name.isEmpty ? "No name" : point.name)
+                    .font(.signikaBold(size: 18))
+                    .foregroundColor(.white)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 12)
+            }
+            .frame(width: Layout.cardWidth, height: Layout.cardHeight)
+            .background(
+                RoundedRectangle(cornerRadius: Layout.cardCornerRadius)
+                    .fill(Color.greenOverlay)
+            )
+            .offset(y: -110)
+            .transition(.scale.combined(with: .opacity))
         }
-        .frame(width: Layout.cardWidth, height: Layout.cardHeight)
-        .background(
-            RoundedRectangle(cornerRadius: Layout.cardCornerRadius)
-                .fill(Color.greenOverlay)
-        )
-        .offset(y: -110)
-        .transition(.scale.combined(with: .opacity))
     }
     
     @ViewBuilder

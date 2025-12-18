@@ -57,7 +57,6 @@ struct AddPointView: View {
             }
         }
         .onAppear {
-            // Запрашиваем геолокацию
             locationManager.requestPermission()
             locationManager.startUpdating()
             
@@ -277,7 +276,6 @@ struct AddPointView: View {
         let collections = CollectionService.shared.getAll()
         let randomCollection = collections.randomElement()
         
-        // Fallback на текущие координаты если ввод некорректный или пустой
         var finalCoordinates = coordinates
         if coordinates.isEmpty || !isValidCoordinates(coordinates) {
             finalCoordinates = locationManager.getCurrentCoordinatesString()
@@ -300,7 +298,6 @@ struct AddPointView: View {
     }
     
     private func isValidCoordinates(_ coords: String) -> Bool {
-        // Используем существующий метод парсинга из модели
         let tempPoint = ForestPoint(coordinates: coords)
         let parsed = tempPoint.parseCoordinates()
         return parsed.latitude != nil && parsed.longitude != nil

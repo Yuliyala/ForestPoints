@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 enum MarkAsType: String, Codable {
     case wantToComeBack
@@ -8,11 +9,22 @@ enum MarkAsType: String, Codable {
     var title: String {
         switch self {
         case .wantToComeBack:
-            "WANT TO COME BACK"
+            "Want to come back"
         case .placesForAutumn:
-            "PLACES FOR AUTUMN"
+            "Places for autumn"
         case .placesForSunrise:
-            "PLACES FOR SUNRISE"
+            "Places for sunrise"
+        }
+    }
+    
+    var image: ImageResource {
+        switch self {
+        case .wantToComeBack:
+            .comeBack
+        case .placesForAutumn:
+            .autumn
+        case .placesForSunrise:
+            .sunrise
         }
     }
 }
