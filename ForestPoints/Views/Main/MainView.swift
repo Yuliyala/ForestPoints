@@ -15,7 +15,7 @@ struct MainView: View {
                     case .visitHistory:
                         VisitHistoryView()
                     case .favorites:
-                        FavoritesView()
+                        PlansAndFavoritesView()
                     case .settings:
                         SettingsView()
                     }

@@ -11,5 +11,6 @@ extension Color {
     static let yellowButton = Color(red: 245/255, green: 179/255, blue: 13/255)
     static let greenOverlay = Color(red: 30/255, green: 49/255, blue: 0/255).opacity(0.86)
     static let greenCard = Color(red: 37/255, green: 60/255, blue: 0/255)
+    static let greenCardBackground = Color(red: 30/255, green: 49/255, blue: 0/255).opacity(0.86)
 }
 

@@ -58,7 +58,7 @@ struct CollectionsView: View {
                 .frame(height: 223)
                 .background(
                     RoundedRectangle(cornerRadius: 40)
-                        .fill(Color(red: 30/255, green: 49/255, blue: 0/255).opacity(0.86))
+                        .fill(Color.greenCardBackground)
                 )
                 .padding(.horizontal, 16)
                 
