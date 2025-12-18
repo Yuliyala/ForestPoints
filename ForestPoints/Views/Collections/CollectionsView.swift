@@ -94,13 +94,19 @@ struct CollectionsView: View {
                 Button {
                     showAddCollection = true
                 } label: {
-                    Text("ADD\nCOLLECTION")
-                        .font(.signikaBold(size: 20))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                        .frame(width: 178, height: 64)
-                        .background(Color.yellowButton)
-                        .cornerRadius(20)
+                    ZStack {
+                        Image(.addView)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 150, height: 73)
+                            .clipped()
+                        
+                        Text("ADD\nCOLLECTION")
+                            .font(.signikaBold(size: 22))
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(width: 150, height: 73)
                 }
                 .padding(.bottom, 20)
             }
@@ -126,17 +132,19 @@ struct CollectionCardView: View {
                 .clipped()
             
             VStack(spacing: 12) {
+                Spacer()
+                
                 if let imageData = collection.imageData,
                    let uiImage = UIImage(data: imageData) {
                     Image(uiImage: uiImage)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 80, height: 80)
+                        .frame(width: 72, height: 84)
                 } else if let defaultImage = defaultIcon(for: collection.title) {
                     Image(defaultImage)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 80, height: 80)
+                        .frame(width: 72, height: 84)
                 }
                 
                 Text(collection.title.uppercased())
@@ -145,7 +153,10 @@ struct CollectionCardView: View {
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 8)
+                    .padding(.bottom, 8)
             }
+            .frame(maxWidth: .infinity)
+            .frame(maxHeight: .infinity)
         }
         .frame(width: 172, height: 155)
     }
