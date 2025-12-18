@@ -23,14 +23,7 @@ struct CollectionDetailView: View {
         .sheet(isPresented: $showEditCollection) {
             AddCollectionView(collection: collection)
         }
-        .alert("Delete Collection", isPresented: $showDeleteAlert) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
-                deleteCollection()
-            }
-        } message: {
-            Text("Are you sure you want to delete this collection?")
-        }
+        .overlay(deleteAlertOverlay)
     }
     
     private var backButton: some View {
@@ -109,6 +102,33 @@ struct CollectionDetailView: View {
     private func deleteCollection() {
         CollectionService.shared.delete(collection)
         dismiss()
+    }
+
+    @ViewBuilder
+    private var deleteAlertOverlay: some View {
+        if showDeleteAlert {
+            Color.black.opacity(0.5)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    showDeleteAlert = false
+                }
+
+            VStack {
+                Spacer()
+
+                DeleteAlertView(
+                    onDelete: {
+                        deleteCollection()
+                    },
+                    onDismiss: {
+                        showDeleteAlert = false
+                    }
+                )
+
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
     }
 }
 
