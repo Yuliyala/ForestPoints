@@ -77,8 +77,8 @@ struct CollectionsView: View {
     }
     
     private var collectionsGrid: some View {
-        VStack(spacing: 0) {
-            ScrollView(showsIndicators: false) {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 20) {
                 LazyVGrid(columns: [
                     GridItem(.flexible(), spacing: 8),
                     GridItem(.flexible(), spacing: 8)
@@ -90,23 +90,21 @@ struct CollectionsView: View {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 20)
+                
+                Button {
+                    showAddCollection = true
+                } label: {
+                    Text("ADD\nCOLLECTION")
+                        .font(.signikaBold(size: 20))
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .frame(width: 178, height: 64)
+                        .background(Color.yellowButton)
+                        .cornerRadius(20)
+                }
+                .padding(.bottom, 20)
             }
-            
-            Spacer()
-            
-            Button {
-                showAddCollection = true
-            } label: {
-                Text("ADD\nCOLLECTION")
-                    .font(.signikaBold(size: 20))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .frame(width: 178, height: 64)
-                    .background(Color.yellowButton)
-                    .cornerRadius(20)
-            }
-            .padding(.bottom, 20)
+            .padding(.top, 20)
         }
     }
     
@@ -120,12 +118,14 @@ struct CollectionCardView: View {
     let collection: Collection
     
     var body: some View {
-        VStack(spacing: 8) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color.greenCard)
-                    .frame(height: 140)
-                
+        ZStack {
+            Image(.collectionIcon)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 172, height: 155)
+                .clipped()
+            
+            VStack(spacing: 12) {
                 if let imageData = collection.imageData,
                    let uiImage = UIImage(data: imageData) {
                     Image(uiImage: uiImage)
@@ -138,14 +138,16 @@ struct CollectionCardView: View {
                         .scaledToFit()
                         .frame(width: 80, height: 80)
                 }
+                
+                Text(collection.title.uppercased())
+                    .font(.signikaBold(size: 20))
+                    .foregroundColor(.white)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 8)
             }
-            
-            Text(collection.title.uppercased())
-                .font(.signikaBold(size: 16))
-                .foregroundColor(.white)
-                .lineLimit(2)
-                .multilineTextAlignment(.center)
         }
+        .frame(width: 172, height: 155)
     }
     
     private func defaultIcon(for name: String) -> ImageResource? {
