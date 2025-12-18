@@ -4,9 +4,15 @@ import PhotosUI
 struct AddCollectionView: View {
     @Environment(\.dismiss) private var dismiss
     
+    let collection: Collection?
+    
     @State private var name = ""
     @State private var selectedImageData: Data?
     @State private var selectedImageItem: PhotosPickerItem?
+    
+    init(collection: Collection? = nil) {
+        self.collection = collection
+    }
     
     var isFormValid: Bool {
         !name.isEmpty
@@ -20,6 +26,12 @@ struct AddCollectionView: View {
                 saveButton
             }
             .bgSetup()
+        }
+        .onAppear {
+            if let collection = collection {
+                name = collection.title
+                selectedImageData = collection.imageData
+            }
         }
         .onChange(of: selectedImageItem) { newValue in
             Task {
@@ -50,7 +62,7 @@ struct AddCollectionView: View {
                 
                 AttributedTextLabel(
                     attributedString: createAttributedString(
-                        from: "ADD\nCOLLECTION",
+                        from: collection == nil ? "ADD\nCOLLECTION" : "EDIT\nCOLLECTION",
                         fontSize: 30,
                         lineHeight: 34,
                         lineSpacing: 0,
@@ -127,23 +139,30 @@ struct AddCollectionView: View {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(Color.greenLight)
                     .frame(width: 120, height: 120)
-                    .overlay(
-                        Image(.camera)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 121, height: 117)
-                    )
             }
+            
+            Image(.camera)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 121, height: 117)
         }
     }
     
     private func saveCollection() {
-        let collection = Collection(
-            imageData: selectedImageData,
-            title: name
-        )
-        
-        CollectionService.shared.save(collection)
+        if let existingCollection = collection {
+            let updatedCollection = Collection(
+                id: existingCollection.id,
+                imageData: selectedImageData,
+                title: name
+            )
+            CollectionService.shared.update(updatedCollection)
+        } else {
+            let newCollection = Collection(
+                imageData: selectedImageData,
+                title: name
+            )
+            CollectionService.shared.save(newCollection)
+        }
         dismiss()
     }
 }

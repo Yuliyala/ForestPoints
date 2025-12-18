@@ -42,10 +42,18 @@ class CollectionService {
         }
     }
     
+    func update(_ collection: Collection) {
+        save(collection)
+    }
+    
     func delete(id: UUID) {
         var collections = getAll()
         collections.removeAll(where: { $0.id == id })
         saveCollections(collections)
+    }
+    
+    func delete(_ collection: Collection) {
+        delete(id: collection.id)
     }
     
     private func saveCollections(_ collections: [Collection]) {
