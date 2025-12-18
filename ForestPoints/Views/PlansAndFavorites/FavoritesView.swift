@@ -39,7 +39,7 @@ struct FavoritesView: View {
                     .frame(width: 229, height: 128)
                 
                 Text("FAVORITES")
-                    .font(.signikaBold(size: 30))
+                    .font(.signikaBold(size: 35))
                     .foregroundColor(.white)
             }
             
@@ -53,6 +53,7 @@ struct FavoritesView: View {
         ScrollView(showsIndicators: false) {
             if favoritePoints.isEmpty {
                 emptyState
+                    .padding(.top, 40)
             } else {
                 VStack(spacing: 12) {
                     ForEach(favoritePoints) { point in
@@ -66,27 +67,38 @@ struct FavoritesView: View {
             }
         }
     }
-    
+
     private var emptyState: some View {
-        VStack(spacing: 20) {
-            Image(.likeIcon)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 100, height: 100)
-            
-            Text("NO FAVORITE\nPLACES YET")
-                .font(.signikaBold(size: 28))
-                .foregroundColor(.white.opacity(0.6))
-                .multilineTextAlignment(.center)
-            
-            Text("Mark spots you want to revisit\nor places that inspire you")
-                .font(.signikaBold(size: 20))
-                .foregroundColor(.white.opacity(0.4))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
+        VStack {
+            Spacer().frame(height: 60)
+
+            ZStack {
+                RoundedRectangle(cornerRadius: 48)
+                    .fill(Color.greenCardBackground)
+                    .frame(width: 350, height: 223)
+
+                VStack(spacing: 12) {
+                    Text("NO FAVORITE\nPLACES YET")
+                        .font(.signikaBold(size: 35))
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Text("Mark spots you want to revisit\nor places that inspire you")
+                        .font(.signikaBold(size: 20))
+                        .foregroundColor(.white.opacity(0.5))
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, 32)
+                }
+                .padding(.horizontal, 20)
+            }
+            .padding(.horizontal, 16)
+
+            Spacer()
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 80)
     }
     
     private func loadPoints() {

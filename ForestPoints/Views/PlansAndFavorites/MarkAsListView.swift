@@ -23,7 +23,7 @@ struct MarkAsListView: View {
     }
     
     private var headerSection: some View {
-        HStack(spacing: 16) {
+        HStack {
             Button(action: {
                 dismiss()
             }) {
@@ -32,19 +32,7 @@ struct MarkAsListView: View {
                     .scaledToFit()
                     .frame(width: 104, height: 101)
             }
-            
-            ZStack {
-                Image(.headerBg)
-                    .resizable()
-                    .frame(width: 229, height: 128)
-                
-                Text(type.title.uppercased())
-                    .font(.signikaBold(size: 24))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-            }
-            
+
             Spacer()
         }
         .padding(.horizontal, 16)
@@ -53,43 +41,56 @@ struct MarkAsListView: View {
     
     private var contentScrollView: some View {
         ScrollView(showsIndicators: false) {
-            if filteredPoints.isEmpty {
-                emptyState
-            } else {
-                VStack(spacing: 12) {
-                    ForEach(filteredPoints) { point in
-                        NavigationLink(destination: PointDetailView(point: point)) {
-                            UpcomingVisitCardView(point: point)
+            VStack(spacing: 20) {
+                markAsHeader
+
+                if filteredPoints.isEmpty {
+                    Spacer().frame(height: 60) 
+                } else {
+                    VStack(spacing: 12) {
+                        ForEach(filteredPoints) { point in
+                            NavigationLink(destination: PointDetailView(point: point)) {
+                                UpcomingVisitCardView(point: point)
+                            }
                         }
                     }
+                    .padding(.horizontal, 16)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 20)
             }
+            .padding(.top, 20)
         }
     }
     
-    private var emptyState: some View {
-        VStack(spacing: 20) {
-            Image(type.image)
+    private var markAsHeader: some View {
+        ZStack {
+            Image(.plansView)
                 .resizable()
-                .scaledToFit()
-                .frame(width: 100, height: 100)
-            
-            Text("NO PLACES YET")
-                .font(.signikaBold(size: 28))
-                .foregroundColor(.white.opacity(0.6))
-            
-            Text("Mark places with \"\(type.title)\" to see them here")
-                .font(.signikaBold(size: 20))
-                .foregroundColor(.white.opacity(0.4))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
+                .scaledToFill()
+                .frame(width: 172, height: 125)
+                .clipShape(RoundedRectangle(cornerRadius: 25))
+
+            VStack(spacing: 8) {
+                Spacer()
+                
+                Image(type.image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 73, height: 72)
+
+                Text(type.title.uppercased())
+                    .font(.signikaBold(size: 20))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer()
+            }
+            .frame(width: 172, height: 125)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 80)
+        .padding(.horizontal, 16)
     }
-    
+
     private func loadPoints() {
         points = ForestPointService.shared.getAll()
     }
