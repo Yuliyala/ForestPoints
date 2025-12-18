@@ -28,18 +28,11 @@ struct PointDetailView: View {
             .bgSetup()
             
             markAsPickerOverlay
+            deleteAlertOverlay
         }
         .navigationBarHidden(true)
         .sheet(isPresented: $showEditPoint) {
             AddPointView(point: point)
-        }
-        .alert("Delete Point", isPresented: $showDeleteAlert) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
-                deletePoint()
-            }
-        } message: {
-            Text("Are you sure you want to delete this point?")
         }
     }
     
@@ -93,7 +86,7 @@ struct PointDetailView: View {
                 Button(action: {
                     toggleFavourite()
                 }) {
-                    Image(.likeIcon)
+                    Image(isFavourite ? .likeIconOn : .likeIcon)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 79, height: 75)
@@ -212,6 +205,33 @@ struct PointDetailView: View {
         var updatedPoint = point
         updatedPoint.isFavourite = isFavourite
         ForestPointService.shared.save(updatedPoint)
+    }
+    
+    @ViewBuilder
+    private var deleteAlertOverlay: some View {
+        if showDeleteAlert {
+            Color.black.opacity(0.5)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    showDeleteAlert = false
+                }
+            
+            VStack {
+                Spacer()
+                
+                DeleteAlertView(
+                    onDelete: {
+                        deletePoint()
+                    },
+                    onDismiss: {
+                        showDeleteAlert = false
+                    }
+                )
+                
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
     }
     
     private func deletePoint() {
