@@ -4,7 +4,6 @@ struct VisitDetailView: View {
     @Environment(\.dismiss) private var dismiss
     
     let visit: Visit
-    @State private var showEditVisit = false
     @State private var showDeleteAlert = false
     @State private var pointName: String = ""
     
@@ -26,9 +25,6 @@ struct VisitDetailView: View {
         .navigationBarHidden(true)
         .onAppear {
             loadPointName()
-        }
-        .sheet(isPresented: $showEditVisit) {
-            AddVisitView(visit: visit)
         }
     }
     
@@ -129,9 +125,7 @@ struct VisitDetailView: View {
     
     private var bottomButtons: some View {
         HStack(spacing: 0) {
-            Button(action: {
-                showEditVisit = true
-            }) {
+            NavigationLink(destination: AddVisitView(visit: visit)) {
                 Image(.editButton)
                     .resizable()
                     .scaledToFit()

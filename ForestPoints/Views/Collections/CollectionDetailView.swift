@@ -4,7 +4,6 @@ struct CollectionDetailView: View {
     @Environment(\.dismiss) private var dismiss
 
     let collection: Collection
-    @State private var showEditCollection = false
     @State private var showDeleteAlert = false
     @State private var points: [ForestPoint] = []
     
@@ -22,9 +21,6 @@ struct CollectionDetailView: View {
             .bgSetup()
         }
         .onAppear(perform: loadPoints)
-        .sheet(isPresented: $showEditCollection) {
-            AddCollectionView(collection: collection)
-        }
         .overlay(deleteAlertOverlay)
     }
     
@@ -74,27 +70,25 @@ struct CollectionDetailView: View {
     }
 
     private var collectionDetailCard: some View {
-        VStack(spacing: 8) {
-            collectionImage
-                .padding(.top, 12)
+        NavigationLink(destination: AddCollectionView(collection: collection)) {
+            VStack(spacing: 8) {
+                collectionImage
+                    .padding(.top, 12)
 
-            Text(displayedPointName)
-                .font(.signikaBold(size: 28))
-                .foregroundColor(.white)
-                .lineLimit(2)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 12)
-        }
-        .frame(width: 310, height: 220)
-        .background(
-            RoundedRectangle(cornerRadius: 40)
-                .fill(Color.greenBg)
-        )
-        .contextMenu {
-            Button("Edit Collection") {
-                showEditCollection = true
+                Text(displayedPointName)
+                    .font(.signikaBold(size: 28))
+                    .foregroundColor(.white)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 12)
             }
-
+            .frame(width: 310, height: 220)
+            .background(
+                RoundedRectangle(cornerRadius: 40)
+                    .fill(Color.greenBg)
+            )
+        }
+        .contextMenu {
             Button("Delete Collection", role: .destructive) {
                 showDeleteAlert = true
             }

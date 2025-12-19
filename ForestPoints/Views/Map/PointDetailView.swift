@@ -6,7 +6,6 @@ struct PointDetailView: View {
     let point: ForestPoint
     @State private var isFavourite: Bool
     @State private var showMarkAsPicker = false
-    @State private var showEditPoint = false
     @State private var showDeleteAlert = false
     
     init(point: ForestPoint) {
@@ -31,9 +30,6 @@ struct PointDetailView: View {
             deleteAlertOverlay
         }
         .navigationBarHidden(true)
-        .sheet(isPresented: $showEditPoint) {
-            AddPointView(point: point)
-        }
     }
     
     private var headerSection: some View {
@@ -147,9 +143,7 @@ struct PointDetailView: View {
     
     private var bottomButtons: some View {
         HStack(spacing: 0) {
-            Button(action: {
-                showEditPoint = true
-            }) {
+            NavigationLink(destination: AddPointView(point: point)) {
                 Image(.editButton)
                     .resizable()
                     .scaledToFit()
