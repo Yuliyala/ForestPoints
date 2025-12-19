@@ -23,6 +23,7 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>Signika-Bold.ttf</string>
+		<string>Signika-Regular.ttf</string>
 	</array>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>We need your location to mark forest points on the map</string>

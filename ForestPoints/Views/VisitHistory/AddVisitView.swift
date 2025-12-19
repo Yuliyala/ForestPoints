@@ -197,7 +197,7 @@ struct AddVisitView: View {
     private var nameField: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("NAME")
-                .font(.signikaBold(size: 22))
+                .font(.signikaRegular(size: 22))
                 .foregroundColor(.white.opacity(0.6))
                 .padding(.leading, 8)
 
@@ -228,7 +228,7 @@ struct AddVisitView: View {
                     .scaledToFit()
                     .frame(width: 74, height: 63)
             }
-            .padding(.vertical, 16)
+            .frame(height: 83)
             .padding(.horizontal, 20)
             .background(Color.greenLight)
             .cornerRadius(20)
@@ -260,7 +260,7 @@ struct AddVisitView: View {
                     .cornerRadius(12)
             }
         }
-        .padding(.vertical, 16)
+        .frame(height: 83)
         .padding(.horizontal, 20)
         .background(Color.greenLight)
         .cornerRadius(20)
@@ -269,7 +269,7 @@ struct AddVisitView: View {
     private var observationsField: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("OBSERVATIONS")
-                .font(.signikaBold(size: 22))
+                .font(.signikaRegular(size: 22))
                 .foregroundColor(.white.opacity(0.6))
                 .padding(.leading, 8)
             
