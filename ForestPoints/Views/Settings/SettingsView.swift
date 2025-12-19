@@ -4,15 +4,12 @@ struct SettingsView: View {
     @State private var remindersEnabled = true
 
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                HeaderView(title: "Settings")
+        VStack(spacing: 0) {
+            HeaderView(title: "Settings")
 
-                settingsCard
+            settingsCard
 
-                Spacer()
-            }
-            .bgSetup()
+            Spacer()
         }
     }
 
