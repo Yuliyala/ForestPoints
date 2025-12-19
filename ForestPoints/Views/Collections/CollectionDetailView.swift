@@ -58,31 +58,27 @@ struct CollectionDetailView: View {
     }
     
     private var collectionIconView: some View {
-        ZStack {
-            Image(.collectionIcon)
+        VStack(spacing: 8) {
+            Spacer()
+
+            Image(defaultIcon(for: collection.title) ?? .collectionIcon)
                 .resizable()
-                .scaledToFill()
-                .frame(width: 172, height: 125)
-                .clipShape(RoundedRectangle(cornerRadius: 25))
+                .scaledToFit()
+                .frame(width: 70, height: 70)
 
-            VStack(spacing: 8) {
-                Spacer()
+            Text(collection.title.uppercased())
+                .font(.signikaBold(size: 22))
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
 
-                Image(defaultIcon(for: collection.title) ?? .collectionIcon)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 70, height: 70)
-
-                Text(collection.title.uppercased())
-                    .font(.signikaBold(size: 22))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-
-                Spacer()
-            }
-            .frame(width: 172, height: 125)
+            Spacer()
         }
+        .frame(width: 172, height: 125)
+        .background(
+            RoundedRectangle(cornerRadius: 25)
+                .fill(Color(red: 37/255, green: 60/255, blue: 0/255))
+        )
     }
 
     private var emptyCollectionCard: some View {
