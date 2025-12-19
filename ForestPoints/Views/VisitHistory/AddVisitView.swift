@@ -13,13 +13,14 @@ struct AddVisitView: View {
     @State private var date = Date()
     @State private var mood: MoodType = .relaxed
     @State private var observations = ""
-    @State private var showPointPicker = false
+    @State private var name = ""
     @State private var showMoodPicker = false
     @State private var showDatePicker = false
     @State private var isMoodSelected = false
     @State private var isDateSelected = false
     
     enum Field: Hashable {
+        case name
         case observations
     }
     
@@ -28,7 +29,7 @@ struct AddVisitView: View {
     }
     
     var isFormValid: Bool {
-        selectedPoint != nil
+        !name.isEmpty
     }
     
     var body: some View {
@@ -65,11 +66,6 @@ struct AddVisitView: View {
                         selectedImageData = data
                     }
                 }
-            }
-        }
-        .sheet(isPresented: $showPointPicker) {
-            NavigationStack {
-                PointPickerView(selectedPoint: $selectedPoint)
             }
         }
         .sheet(isPresented: $showDatePicker) {
@@ -204,19 +200,15 @@ struct AddVisitView: View {
                 .font(.signikaBold(size: 22))
                 .foregroundColor(.white.opacity(0.6))
                 .padding(.leading, 8)
-            
-            Button(action: {
-                showPointPicker = true
-            }) {
-                Text(selectedPoint?.name ?? "Text..")
-                    .font(.signikaBold(size: 25))
-                    .foregroundColor(selectedPoint == nil ? .white.opacity(0.4) : .white)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.vertical, 16)
-                    .padding(.horizontal, 20)
-                    .background(Color.greenLight)
-                    .cornerRadius(20)
-            }
+
+            TextField("", text: $name, prompt: Text("Text..").foregroundColor(.white.opacity(0.4)), axis: .vertical)
+                .font(.signikaBold(size: 25))
+                .foregroundColor(.white)
+                .frame(height: 83)
+                .padding(.horizontal, 20)
+                .background(Color.greenLight)
+                .cornerRadius(20)
+                .focused($focusedField, equals: .name)
         }
     }
     
@@ -316,11 +308,25 @@ struct AddVisitView: View {
         
         if let point = ForestPointService.shared.getAll().first(where: { $0.id == visit.pointId }) {
             selectedPoint = point
+            name = point.name
         }
     }
     
     private func saveVisit() {
-        guard let point = selectedPoint else { return }
+        let point: ForestPoint
+        
+        if let existingPoint = selectedPoint {
+            point = existingPoint
+        } else {
+            point = ForestPoint(
+                imageData: selectedImageData,
+                type: .clearing,
+                name: name,
+                coordinates: "",
+                collectionId: nil
+            )
+            ForestPointService.shared.save(point)
+        }
         
         if let existingVisit = visit {
             let updatedVisit = Visit(

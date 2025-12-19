@@ -1,14 +1,28 @@
 import SwiftUI
 
 struct DeleteAlertView: View {
+    let title: String
+    let message: String
     let onDelete: () -> Void
     let onDismiss: () -> Void
+    
+    init(
+        title: String = "DELETE",
+        message: String = "ARE YOU SURE YOU WANT TO\nDELETE THE ENTIRE HISTORY?\nTHIS ACTION CANNOT BE UNDONE",
+        onDelete: @escaping () -> Void,
+        onDismiss: @escaping () -> Void
+    ) {
+        self.title = title
+        self.message = message
+        self.onDelete = onDelete
+        self.onDismiss = onDismiss
+    }
     
     var body: some View {
         VStack(spacing: 20) {
             HStack {
                 Spacer()
-                Text("DELETE")
+                Text(title.uppercased())
                     .font(.signikaBold(size: 35))
                     .foregroundColor(.white)
                 
@@ -27,17 +41,11 @@ struct DeleteAlertView: View {
             .padding(.top, 32)
             
             VStack(spacing: 4) {
-                Text("ARE YOU SURE YOU WANT TO".uppercased())
-                    .font(.signikaBold(size: 22))
-                    .foregroundColor(.white)
-                
-                Text("DELETE THE ENTIRE HISTORY?".uppercased())
-                    .font(.signikaBold(size: 22))
-                    .foregroundColor(.white)
-                
-                Text("THIS ACTION CANNOT BE UNDONE".uppercased())
-                    .font(.signikaBold(size: 22))
-                    .foregroundColor(.white)
+                ForEach(message.split(separator: "\n").map(String.init), id: \.self) { line in
+                    Text(line.uppercased())
+                        .font(.signikaBold(size: 22))
+                        .foregroundColor(.white)
+                }
             }
             .multilineTextAlignment(.center)
             

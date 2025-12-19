@@ -20,6 +20,8 @@ struct VisitDetailView: View {
                 bottomButtons
             }
             .bgSetup()
+            
+            deleteAlertOverlay
         }
         .navigationBarHidden(true)
         .onAppear {
@@ -27,14 +29,6 @@ struct VisitDetailView: View {
         }
         .sheet(isPresented: $showEditVisit) {
             AddVisitView(visit: visit)
-        }
-        .alert("Delete Visit", isPresented: $showDeleteAlert) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
-                deleteVisit()
-            }
-        } message: {
-            Text("Are you sure you want to delete this visit?")
         }
     }
     
@@ -160,6 +154,35 @@ struct VisitDetailView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy"
         return formatter.string(from: visit.date)
+    }
+    
+    @ViewBuilder
+    private var deleteAlertOverlay: some View {
+        if showDeleteAlert {
+            Color.black.opacity(0.5)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    showDeleteAlert = false
+                }
+            
+            VStack {
+                Spacer()
+                
+                DeleteAlertView(
+                    title: "DELETE VISIT",
+                    message: "ARE YOU SURE YOU WANT TO\nDELETE THIS VISIT?\nTHIS ACTION CANNOT BE UNDONE",
+                    onDelete: {
+                        deleteVisit()
+                    },
+                    onDismiss: {
+                        showDeleteAlert = false
+                    }
+                )
+                
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
     }
     
     private func loadPointName() {
