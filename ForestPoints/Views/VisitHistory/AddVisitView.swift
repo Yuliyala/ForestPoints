@@ -29,7 +29,7 @@ struct AddVisitView: View {
     }
     
     var isFormValid: Bool {
-        !name.isEmpty
+        !name.isEmpty && isMoodSelected && !observations.isEmpty
     }
     
     var body: some View {
