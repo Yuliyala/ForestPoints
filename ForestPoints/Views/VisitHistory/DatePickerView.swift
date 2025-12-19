@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct DatePickerView: View {
-    @Environment(\.dismiss) private var dismiss
     @Binding var selectedDate: Date
     @State private var tempSelectedDate: Date
     
@@ -11,33 +10,26 @@ struct DatePickerView: View {
     }
     
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                headerSection
-                
-                Spacer()
-                
-                datePickerSection
-                
-                Spacer()
-                
-                confirmButton
-            }
-            .bgSetup()
+        VStack(spacing: 0) {
+            headerSection
+            
+            Spacer()
+            
+            datePickerSection
+            
+            Spacer()
+            
+            confirmButton
         }
-        .navigationBarHidden(true)
     }
     
     private var headerSection: some View {
         HStack(spacing: 16) {
-            Button(action: {
-                dismiss()
-            }) {
-                Image(.closeButton)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 56, height: 56)
-            }
+            Image(.closeButton)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 56, height: 56)
+                .opacity(0)
             
             Text("SELECT DATE")
                 .font(.signikaBold(size: 30))
@@ -68,7 +60,6 @@ struct DatePickerView: View {
     private var confirmButton: some View {
         Button(action: {
             selectedDate = tempSelectedDate
-            dismiss()
         }) {
             Image(.doneButton)
                 .resizable()
@@ -78,4 +69,3 @@ struct DatePickerView: View {
         .padding(.bottom, 20)
     }
 }
-

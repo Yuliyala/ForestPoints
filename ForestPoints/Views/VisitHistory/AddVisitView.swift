@@ -52,6 +52,7 @@ struct AddVisitView: View {
             .ignoresSafeArea(.keyboard)
             
             moodPickerOverlay
+            datePickerOverlay
         }
         .navigationBarHidden(true)
         .onAppear {
@@ -66,14 +67,6 @@ struct AddVisitView: View {
                         selectedImageData = data
                     }
                 }
-            }
-        }
-        .sheet(isPresented: $showDatePicker) {
-            NavigationStack {
-                DatePickerView(selectedDate: $date)
-                    .onDisappear {
-                        isDateSelected = true
-                    }
             }
         }
     }
@@ -104,6 +97,35 @@ struct AddVisitView: View {
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+    
+    @ViewBuilder
+    private var datePickerOverlay: some View {
+        if showDatePicker {
+            Color.black.opacity(0.5)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    showDatePicker = false
+                    isDateSelected = true
+                }
+            
+            VStack {
+                Spacer()
+                
+                DatePickerView(selectedDate: $date)
+                    .padding(.horizontal, 16)
+                    .onDisappear {
+                        isDateSelected = true
+                    }
+                
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .onChange(of: date) { _ in
+                showDatePicker = false
+                isDateSelected = true
+            }
         }
     }
     

@@ -15,25 +15,18 @@ struct MarkAsPickerView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            headerSection
-            markAsGrid
-            desiredDateSection
-            confirmButton
-        }
-        .frame(height: 650)
-        .background(backgroundView)
-        .sheet(isPresented: $showDatePicker) {
-            NavigationStack {
-                DatePickerView(selectedDate: Binding(
-                    get: { desiredDate ?? Date() },
-                    set: { desiredDate = $0 }
-                ))
-                .onDisappear {
-                    if desiredDate == nil {
-                        desiredDate = Date()
-                    }
-                }
+        ZStack {
+            VStack(spacing: 0) {
+                headerSection
+                markAsGrid
+                desiredDateSection
+                confirmButton
+            }
+            .frame(height: 650)
+            .background(backgroundView)
+            
+            if showDatePicker {
+                datePickerOverlay
             }
         }
     }
@@ -162,6 +155,34 @@ struct MarkAsPickerView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy"
         return formatter.string(from: desiredDate ?? Date())
+    }
+    
+    @ViewBuilder
+    private var datePickerOverlay: some View {
+        Color.black.opacity(0.5)
+            .ignoresSafeArea()
+            .onTapGesture {
+                showDatePicker = false
+                if desiredDate == nil {
+                    desiredDate = Date()
+                }
+            }
+        
+        VStack {
+            Spacer()
+            
+            DatePickerView(selectedDate: Binding(
+                get: { desiredDate ?? Date() },
+                set: { desiredDate = $0 }
+            ))
+            .padding(.horizontal, 16)
+            .onChange(of: desiredDate) { _ in
+                showDatePicker = false
+            }
+            
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     private func saveMarkAs() {
