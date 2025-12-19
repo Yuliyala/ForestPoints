@@ -9,16 +9,32 @@ struct CollectionDetailView: View {
     
     var body: some View {
         ZStack {
-            VStack(spacing: 20) {
-                backButton
+            if collectionPoints.isEmpty {
+                VStack(spacing: 20) {
+                    backButton
 
-                collectionIconView
+                    collectionIconView
 
-                collectionDetailCard
+                    emptyCollectionCard
 
-                Spacer()
+                    Spacer()
+                }
+                .bgSetup()
+            } else {
+                VStack(spacing: 0) {
+                    backButton
+
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 20) {
+                            collectionIconView
+
+                            pointsList
+                        }
+                        .padding(.bottom, 20)
+                    }
+                }
+                .bgSetup()
             }
-            .bgSetup()
         }
         .onAppear(perform: loadPoints)
         .overlay(deleteAlertOverlay)
@@ -69,17 +85,31 @@ struct CollectionDetailView: View {
         }
     }
 
-    private var collectionDetailCard: some View {
-        Group {
-            if let point = featuredPoint {
-                NavigationLink(destination: PointDetailView(point: point)) {
-                    cardContent
-                }
-                .buttonStyle(.plain)
-            } else {
-                cardContent
-            }
+    private var emptyCollectionCard: some View {
+        VStack(spacing: 8) {
+            RoundedRectangle(cornerRadius: 25)
+                .fill(Color.greenLight)
+                .frame(width: 278, height: 160)
+                .overlay(
+                    Image(.camera)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 60, height: 60)
+                )
+
+            Text("NO POINTS YET")
+                .font(.signikaBold(size: 28))
+                .foregroundColor(.white)
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 12)
         }
+        .padding(.top, 12)
+        .frame(width: 310, height: 220)
+        .background(
+            RoundedRectangle(cornerRadius: 40)
+                .fill(Color.greenBg)
+        )
         .contextMenu {
             Button("Delete Collection", role: .destructive) {
                 showDeleteAlert = true
@@ -87,59 +117,57 @@ struct CollectionDetailView: View {
         }
     }
     
-    private var cardContent: some View {
-        VStack(spacing: 8) {
-            collectionImage
-                .padding(.top, 12)
-
-            Text(displayedPointName)
-                .font(.signikaBold(size: 28))
-                .foregroundColor(.white)
-                .lineLimit(2)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 12)
+    private var pointsList: some View {
+        VStack(spacing: 12) {
+            ForEach(collectionPoints) { point in
+                NavigationLink(destination: PointDetailView(point: point)) {
+                    pointCard(for: point)
+                }
+                .buttonStyle(.plain)
+            }
         }
-        .frame(width: 310, height: 220)
-        .background(
-            RoundedRectangle(cornerRadius: 40)
-                .fill(Color.greenBg)
-        )
+        .padding(.horizontal, 16)
     }
-
-    private var collectionImage: some View {
-        Group {
-            if let point = featuredPoint,
-               let imageData = point.imageData,
+    
+    private func pointCard(for point: ForestPoint) -> some View {
+        VStack(spacing: 8) {
+            if let imageData = point.imageData,
                let uiImage = UIImage(data: imageData) {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFill()
-            } else if let imageData = collection.imageData,
-                      let uiImage = UIImage(data: imageData) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFill()
+                    .frame(width: 310, height: 135)
+                    .clipShape(RoundedRectangle(cornerRadius: 25))
             } else {
-                RoundedRectangle(cornerRadius: 30)
+                RoundedRectangle(cornerRadius: 25)
                     .fill(Color.greenLight)
+                    .frame(width: 310, height: 135)
                     .overlay(
                         Image(.camera)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 60, height: 60)
+                            .frame(width: 50, height: 50)
                     )
             }
+            
+            HStack {
+                Text(point.name.uppercased())
+                    .font(.signikaBold(size: 22))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                Spacer()
+            }
+            .padding(.horizontal, 20)
         }
-        .frame(width: 278, height: 160)
-        .clipShape(RoundedRectangle(cornerRadius: 25))
+        .frame(width: 350, height: 234)
+        .background(
+            RoundedRectangle(cornerRadius: 48)
+                .fill(Color.greenCardBackground)
+        )
     }
 
-    private var featuredPoint: ForestPoint? {
-        points.first { $0.collectionId == collection.id }
-    }
-
-    private var displayedPointName: String {
-        featuredPoint?.name.uppercased() ?? "NO POINTS YET"
+    private var collectionPoints: [ForestPoint] {
+        points.filter { $0.collectionId == collection.id }
     }
     
     private func deleteCollection() {

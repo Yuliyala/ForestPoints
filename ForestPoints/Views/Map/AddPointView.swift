@@ -300,13 +300,20 @@ struct AddPointView: View {
     }
     
     private func savePoint() {
-        let collections = CollectionService.shared.getAll()
-        let randomCollection = collections.randomElement()
-        
         var finalCoordinates = coordinates
         if coordinates.isEmpty || !isValidCoordinates(coordinates) {
             let randomCoord = MockCoordinates.random()
             finalCoordinates = String(format: "%.4f, %.4f", randomCoord.latitude, randomCoord.longitude)
+        }
+        
+        let finalCollectionId: UUID?
+        if let existingPoint = point {
+            finalCollectionId = existingPoint.collectionId
+        } else {
+            let allCollections = CollectionService.shared.getAll()
+            let defaultCollectionTitles = ["Views", "Observations", "Pleasant Places", "Landmarks", "Useful Points"]
+            let defaultCollections = allCollections.filter { defaultCollectionTitles.contains($0.title) }
+            finalCollectionId = defaultCollections.randomElement()?.id
         }
         
         let newPoint = ForestPoint(
@@ -318,7 +325,7 @@ struct AddPointView: View {
             notes: "",
             isFavourite: point?.isFavourite ?? false,
             markAsType: point?.markAsType,
-            collectionId: randomCollection?.id
+            collectionId: finalCollectionId
         )
         
         ForestPointService.shared.save(newPoint)
