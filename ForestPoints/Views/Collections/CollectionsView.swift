@@ -152,6 +152,7 @@ struct CollectionCardView: View {
                     .font(.signikaBold(size: 20))
                     .foregroundColor(.white)
                     .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 8)
                     .padding(.bottom, 8)

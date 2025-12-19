@@ -67,10 +67,12 @@ struct CollectionDetailView: View {
                 .frame(width: 70, height: 70)
 
             Text(collection.title.uppercased())
-                .font(.signikaBold(size: 22))
+                .font(.signikaBold(size: 20))
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 8)
 
             Spacer()
         }
@@ -132,12 +134,12 @@ struct CollectionDetailView: View {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 310, height: 135)
+                    .frame(width: 310, height: 310)
                     .clipShape(RoundedRectangle(cornerRadius: 25))
             } else {
                 RoundedRectangle(cornerRadius: 25)
                     .fill(Color.greenLight)
-                    .frame(width: 310, height: 135)
+                    .frame(width: 310, height: 310)
                     .overlay(
                         Image(.camera)
                             .resizable()
@@ -155,7 +157,8 @@ struct CollectionDetailView: View {
             }
             .padding(.horizontal, 20)
         }
-        .frame(width: 350, height: 234)
+        .padding(20)
+        .frame(width: 350, height: 397)
         .background(
             RoundedRectangle(cornerRadius: 48)
                 .fill(Color.greenCardBackground)
