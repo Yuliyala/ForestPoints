@@ -8,19 +8,21 @@ struct VisitDetailView: View {
     @State private var pointName: String = ""
     
     var body: some View {
-        ZStack {
-            VStack(spacing: 20) {
-                backButton
+        GeometryReader { geometry in
+            ZStack {
+                VStack(spacing: geometry.size.height < 650 ? 12 : 20) {
+                    backButton
+                    
+                    ScrollView(showsIndicators: false) {
+                        contentCard(geometry: geometry)
+                    }
+                    
+                    bottomButtons(geometry: geometry)
+                }
+                .bgSetup()
                 
-                contentCard
-                
-                Spacer()
-                
-                bottomButtons
+                deleteAlertOverlay
             }
-            .bgSetup()
-            
-            deleteAlertOverlay
         }
         .navigationBarHidden(true)
         .onAppear {
@@ -45,24 +47,24 @@ struct VisitDetailView: View {
         .padding(.top, 20)
     }
     
-    private var contentCard: some View {
-        VStack(spacing: 16) {
+    private func contentCard(geometry: GeometryProxy) -> some View {
+        VStack(spacing: geometry.size.height < 650 ? 12 : 16) {
             if let imageData = visit.imageData,
                let uiImage = UIImage(data: imageData) {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 308, height: 224)
+                    .frame(width: 308, height: geometry.size.height < 650 ? 150 : 224)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
             } else {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(Color.greenLight)
-                    .frame(width: 308, height: 224)
+                    .frame(width: 308, height: geometry.size.height < 650 ? 150 : 224)
             }
             
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: geometry.size.height < 650 ? 8 : 12) {
                 Text(pointName.isEmpty ? "Unknown Point" : pointName.uppercased())
-                    .font(.signikaBold(size: 35))
+                    .font(.signikaBold(size: geometry.size.height < 650 ? 24 : 35))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -74,34 +76,34 @@ struct VisitDetailView: View {
                         .frame(width: 20, height: 20)
                     
                     Text(formattedDate)
-                        .font(.signikaBold(size: 18))
+                        .font(.signikaBold(size: geometry.size.height < 650 ? 16 : 18))
                         .foregroundColor(.white.opacity(0.8))
                 }
                 
                 HStack(spacing: 8) {
                     Text("Mood")
-                        .font(.signikaBold(size: 25))
+                        .font(.signikaBold(size: geometry.size.height < 650 ? 18 : 25))
                         .foregroundColor(.white.opacity(0.6))
                     Spacer()
                     
                     Text(visit.mood.title.uppercased())
-                        .font(.signikaBold(size: 22))
+                        .font(.signikaBold(size: geometry.size.height < 650 ? 18 : 22))
                         .foregroundColor(.white)
                     
                     Image(visit.mood.image)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 40, height: 54)
+                        .frame(width: geometry.size.height < 650 ? 32 : 40, height: geometry.size.height < 650 ? 43 : 54)
                 }
                 
                 if !visit.observations.isEmpty {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Observations")
-                            .font(.signikaBold(size: 22))
+                            .font(.signikaBold(size: geometry.size.height < 650 ? 18 : 22))
                             .foregroundColor(.white.opacity(0.6))
                         
                         Text(visit.observations)
-                            .font(.signikaBold(size: 25))
+                            .font(.signikaBold(size: geometry.size.height < 650 ? 18 : 25))
                             .foregroundColor(.white)
                             .multilineTextAlignment(.leading)
                     }
@@ -110,7 +112,7 @@ struct VisitDetailView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 20)
         }
-        .padding(.vertical, 20)
+        .padding(.vertical, geometry.size.height < 650 ? 12 : 20)
         .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 40)
@@ -123,13 +125,16 @@ struct VisitDetailView: View {
         .padding(.horizontal, 16)
     }
     
-    private var bottomButtons: some View {
+    private func bottomButtons(geometry: GeometryProxy) -> some View {
         HStack(spacing: 0) {
             NavigationLink(destination: AddVisitView(visit: visit)) {
                 Image(.editButton)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 115, height: 117)
+                    .frame(
+                        width: geometry.size.height < 650 ? 90 : 115,
+                        height: geometry.size.height < 650 ? 92 : 117
+                    )
             }
             
             Button(action: {
@@ -138,10 +143,13 @@ struct VisitDetailView: View {
                 Image(.deleteButton)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 115, height: 117)
+                    .frame(
+                        width: geometry.size.height < 650 ? 90 : 115,
+                        height: geometry.size.height < 650 ? 92 : 117
+                    )
             }
         }
-        .padding(.bottom, 20)
+        .padding(.bottom, geometry.size.height < 650 ? 12 : 20)
     }
     
     private var formattedDate: String {

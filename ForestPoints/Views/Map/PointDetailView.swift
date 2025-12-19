@@ -14,25 +14,27 @@ struct PointDetailView: View {
     }
     
     var body: some View {
-        ZStack {
-            VStack(spacing: 20) {
-                headerSection
+        GeometryReader { geometry in
+            ZStack {
+                VStack(spacing: geometry.size.height < 650 ? 12 : 20) {
+                    headerSection(geometry: geometry)
+                    
+                    ScrollView(showsIndicators: false) {
+                        contentCard(geometry: geometry)
+                    }
+                    
+                    bottomButtons(geometry: geometry)
+                }
+                .bgSetup()
                 
-                contentCard
-                
-                Spacer()
-                
-                bottomButtons
+                markAsPickerOverlay
+                deleteAlertOverlay
             }
-            .bgSetup()
-            
-            markAsPickerOverlay
-            deleteAlertOverlay
         }
         .navigationBarHidden(true)
     }
     
-    private var headerSection: some View {
+    private func headerSection(geometry: GeometryProxy) -> some View {
         HStack(spacing: 16) {
             Button(action: {
                 dismiss()
@@ -40,7 +42,10 @@ struct PointDetailView: View {
                 Image(.back)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 104, height: 101)
+                    .frame(
+                        width: geometry.size.height < 650 ? 85 : 104,
+                        height: geometry.size.height < 650 ? 82 : 101
+                    )
             }
             
             Spacer()
@@ -51,32 +56,35 @@ struct PointDetailView: View {
                 ZStack {
                     Image(.addView)
                         .resizable()
-                        .frame(width: 163, height:79)
+                        .frame(
+                            width: geometry.size.height < 650 ? 140 : 163,
+                            height: geometry.size.height < 650 ? 68 : 79
+                        )
                     
                     Text("MARK AS")
-                        .font(.signikaBold(size: 30))
+                        .font(.signikaBold(size: geometry.size.height < 650 ? 24 : 30))
                         .foregroundColor(.white)
                 }
             }
         }
         .padding(.horizontal, 16)
-        .padding(.top, 20)
+        .padding(.top, geometry.size.height < 650 ? 12 : 20)
     }
     
-    private var contentCard: some View {
-        VStack(spacing: 16) {
+    private func contentCard(geometry: GeometryProxy) -> some View {
+        VStack(spacing: geometry.size.height < 650 ? 12 : 16) {
             ZStack(alignment: .topTrailing) {
                 if let imageData = point.imageData,
                    let uiImage = UIImage(data: imageData) {
                     Image(uiImage: uiImage)
                         .resizable()
                         .scaledToFill()
-                        .frame(width: 308, height: 224)
+                        .frame(width: 308, height: geometry.size.height < 650 ? 150 : 224)
                         .clipShape(RoundedRectangle(cornerRadius: 20))
                 } else {
                     RoundedRectangle(cornerRadius: 20)
                         .fill(Color.greenLight)
-                        .frame(width: 308, height: 224)
+                        .frame(width: 308, height: geometry.size.height < 650 ? 150 : 224)
                 }
                 
                 Button(action: {
@@ -85,14 +93,17 @@ struct PointDetailView: View {
                     Image(isFavourite ? .likeIconOn : .likeIcon)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 79, height: 75)
+                        .frame(
+                            width: geometry.size.height < 650 ? 65 : 79,
+                            height: geometry.size.height < 650 ? 62 : 75
+                        )
                 }
-                .padding(12)
+                .padding(geometry.size.height < 650 ? 8 : 12)
             }
             
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: geometry.size.height < 650 ? 8 : 12) {
                 Text(point.name.isEmpty ? "Unknown Point" : point.name.uppercased())
-                    .font(.signikaBold(size: 35))
+                    .font(.signikaBold(size: geometry.size.height < 650 ? 24 : 35))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -101,15 +112,18 @@ struct PointDetailView: View {
                     Image(.calendar)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 40, height: 41)
+                        .frame(
+                            width: geometry.size.height < 650 ? 32 : 40,
+                            height: geometry.size.height < 650 ? 33 : 41
+                        )
                     
                     VStack(alignment: .leading, spacing: 0) {
                         Text("Date Added")
-                            .font(.signikaBold(size: 15))
+                            .font(.signikaBold(size: geometry.size.height < 650 ? 13 : 15))
                             .foregroundColor(.white.opacity(0.6))
                         
                         Text(formattedDate)
-                            .font(.signikaBold(size: 25))
+                            .font(.signikaBold(size: geometry.size.height < 650 ? 20 : 25))
                             .foregroundColor(.white)
                     }
                 }
@@ -118,17 +132,20 @@ struct PointDetailView: View {
                     Image(.pin)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 38, height: 46)
+                        .frame(
+                            width: geometry.size.height < 650 ? 30 : 38,
+                            height: geometry.size.height < 650 ? 37 : 46
+                        )
                     
                     Text(point.coordinates)
-                        .font(.signikaBold(size: 20))
+                        .font(.signikaBold(size: geometry.size.height < 650 ? 16 : 20))
                         .foregroundColor(.white)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 20)
         }
-        .padding(.vertical, 20)
+        .padding(.vertical, geometry.size.height < 650 ? 12 : 20)
         .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 40)
@@ -141,13 +158,16 @@ struct PointDetailView: View {
         .padding(.horizontal, 16)
     }
     
-    private var bottomButtons: some View {
+    private func bottomButtons(geometry: GeometryProxy) -> some View {
         HStack(spacing: 0) {
             NavigationLink(destination: AddPointView(point: point)) {
                 Image(.editButton)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 115, height: 117)
+                    .frame(
+                        width: geometry.size.height < 650 ? 90 : 115,
+                        height: geometry.size.height < 650 ? 92 : 117
+                    )
             }
             
             Button(action: {
@@ -156,10 +176,13 @@ struct PointDetailView: View {
                 Image(.deleteButton)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 115, height: 117)
+                    .frame(
+                        width: geometry.size.height < 650 ? 90 : 115,
+                        height: geometry.size.height < 650 ? 92 : 117
+                    )
             }
         }
-        .padding(.bottom, 20)
+        .padding(.bottom, geometry.size.height < 650 ? 12 : 20)
     }
     
     @ViewBuilder

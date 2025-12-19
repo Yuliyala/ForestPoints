@@ -176,8 +176,7 @@
                             .padding(.horizontal, 8)
                             .padding(.bottom, 8)
                     }
-                    .frame(maxWidth: .infinity)
-                    .frame(maxHeight: .infinity)
+                    .frame(width: 172, height: 155)
                 }
             }
             .frame(width: 172, height: 155)

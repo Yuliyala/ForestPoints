@@ -12,32 +12,34 @@ struct MapView: View {
     private static let defaultCenter = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
     
     var body: some View {
-        VStack(spacing: 0) {
-            HeaderView(title: "Forest Points\nCatalog")
-            
-            Map(coordinateRegion: $region, annotationItems: points.filter { 
-                let coords = $0.parseCoordinates()
-                return coords.latitude != nil && coords.longitude != nil
-            }) { point in
-                MapAnnotation(coordinate: point.coordinateForMap) {
-                    MapPinView(point: point)
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                HeaderView(title: "Forest Points\nCatalog")
+                
+                Map(coordinateRegion: $region, annotationItems: points.filter { 
+                    let coords = $0.parseCoordinates()
+                    return coords.latitude != nil && coords.longitude != nil
+                }) { point in
+                    MapAnnotation(coordinate: point.coordinateForMap) {
+                        MapPinView(point: point)
+                    }
                 }
+                .frame(height: geometry.size.height < 650 ? 280 : 362)
+                .cornerRadius(20)
+                .padding(.top, 8)
+                
+                Button {
+                    showAddPoint = true
+                } label: {
+                    Image(.addButton)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geometry.size.height < 650 ? 70 : 93, height: geometry.size.height < 650 ? 70 : 93)
+                }
+                .padding(.top, 12)
+                
+                Spacer()
             }
-            .frame(height: 362)
-            .cornerRadius(20)
-            .padding(.top, 8)
-            
-            Button {
-                showAddPoint = true
-            } label: {
-                Image(.addButton)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 93, height: 93)
-            }
-            .padding(.top, 12)
-            
-            Spacer()
         }
         .onAppear {
             loadPoints()
