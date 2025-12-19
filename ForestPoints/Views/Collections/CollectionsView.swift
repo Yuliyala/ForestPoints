@@ -139,13 +139,17 @@ struct CollectionCardView: View {
                    let uiImage = UIImage(data: imageData) {
                     Image(uiImage: uiImage)
                         .resizable()
-                        .scaledToFit()
-                        .frame(width: 72, height: 84)
+                        .scaledToFill()
+                        .frame(width: 80, height: 50)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                 } else if let defaultImage = defaultIcon(for: collection.title) {
                     Image(defaultImage)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 72, height: 84)
+                } else {
+                    Color.clear
+                        .frame(width: 80, height: 50)
                 }
                 
                 Text(collection.title.uppercased())

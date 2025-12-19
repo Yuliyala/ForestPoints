@@ -61,10 +61,22 @@ struct CollectionDetailView: View {
         VStack(spacing: 8) {
             Spacer()
 
-            Image(defaultIcon(for: collection.title) ?? .collectionIcon)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 70, height: 70)
+            if let imageData = collection.imageData,
+               let uiImage = UIImage(data: imageData) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 100, height: 70)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            } else if let defaultImage = defaultIcon(for: collection.title) {
+                Image(defaultImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 70, height: 70)
+            } else {
+                Color.clear
+                    .frame(width: 100, height: 70)
+            }
 
             Text(collection.title.uppercased())
                 .font(.signikaBold(size: 20))
