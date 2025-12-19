@@ -3,7 +3,6 @@ import PhotosUI
 
 struct AddPointView: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject private var locationManager = LocationManager.shared
     @FocusState private var focusedField: Field?
     @Namespace private var namespace
     
@@ -71,19 +70,16 @@ struct AddPointView: View {
             }
         }
         .onAppear {
-            locationManager.requestPermission()
-            locationManager.startUpdating()
-            
             if let point = point {
                 selectedImageData = point.imageData
                 selectedType = point.type
                 isTypeChosen = true
                 name = point.name
                 coordinates = point.coordinates
+            } else {
+                let randomCoord = MockCoordinates.random()
+                coordinates = String(format: "%.4f, %.4f", randomCoord.latitude, randomCoord.longitude)
             }
-        }
-        .onDisappear {
-            locationManager.stopUpdating()
         }
     }
     
@@ -309,7 +305,8 @@ struct AddPointView: View {
         
         var finalCoordinates = coordinates
         if coordinates.isEmpty || !isValidCoordinates(coordinates) {
-            finalCoordinates = locationManager.getCurrentCoordinatesString()
+            let randomCoord = MockCoordinates.random()
+            finalCoordinates = String(format: "%.4f, %.4f", randomCoord.latitude, randomCoord.longitude)
         }
         
         let newPoint = ForestPoint(

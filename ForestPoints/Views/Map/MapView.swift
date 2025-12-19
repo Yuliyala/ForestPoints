@@ -2,7 +2,6 @@ import SwiftUI
 import MapKit
 
 struct MapView: View {
-    @ObservedObject private var locationManager = LocationManager.shared
     @State private var points: [ForestPoint] = []
     @State private var showAddPoint = false
     @State private var region = MKCoordinateRegion(
@@ -41,15 +40,7 @@ struct MapView: View {
             Spacer()
         }
         .onAppear {
-            if locationManager.authorizationStatus == .notDetermined {
-                locationManager.requestPermission()
-            }
-            locationManager.startUpdating()
             loadPoints()
-            centerMapOnCurrentLocation()
-        }
-        .onDisappear {
-            locationManager.stopUpdating()
         }
         .navigationDestination(isPresented: $showAddPoint) {
             AddPointView()
@@ -66,12 +57,6 @@ struct MapView: View {
             if let lat = coords.latitude, let lon = coords.longitude {
                 region.center = CLLocationCoordinate2D(latitude: lat, longitude: lon)
             }
-        }
-    }
-    
-    private func centerMapOnCurrentLocation() {
-        if let location = locationManager.currentLocation {
-            region.center = location
         }
     }
 }
