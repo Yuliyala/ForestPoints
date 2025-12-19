@@ -163,12 +163,12 @@ struct AddCollectionView: View {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(Color.greenLight)
                     .frame(width: 120, height: 120)
+                
+                Image(.camera)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 121, height: 117)
             }
-            
-            Image(.camera)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 121, height: 117)
         }
     }
     

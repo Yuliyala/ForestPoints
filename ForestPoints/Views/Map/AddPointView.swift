@@ -251,12 +251,16 @@ struct AddPointView: View {
                         .foregroundColor(.red)
                         .font(.caption)
                 }
+            } else {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color.greenLight)
+                    .frame(width: 120, height: 120)
+                
+                Image(.camera)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 121, height: 117)
             }
-            
-            Image(.camera)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 121, height: 117)
         }
         .onAppear {
             print("photoPicker appeared, selectedImageData: \(selectedImageData != nil ? "exists (\(selectedImageData!.count) bytes)" : "nil")")
