@@ -3,6 +3,7 @@ import PhotosUI
 
 struct AddVisitView: View {
     @Environment(\.dismiss) private var dismiss
+    @FocusState private var focusedField: Field?
     
     let visit: Visit?
     
@@ -18,6 +19,10 @@ struct AddVisitView: View {
     @State private var isMoodSelected = false
     @State private var isDateSelected = false
     
+    enum Field: Hashable {
+        case observations
+    }
+    
     init(visit: Visit? = nil) {
         self.visit = visit
     }
@@ -31,9 +36,19 @@ struct AddVisitView: View {
             VStack(spacing: 0) {
                 headerSection
                 contentScrollView
-                saveButton
             }
             .bgSetup()
+            .onTapGesture {
+                focusedField = nil
+            }
+            
+            VStack {
+                Spacer()
+                saveButton
+                    .padding(.bottom, 20)
+            }
+            .allowsHitTesting(true)
+            .ignoresSafeArea(.keyboard)
             
             moodPickerOverlay
         }
@@ -129,25 +144,36 @@ struct AddVisitView: View {
     }
     
     private var contentScrollView: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 20) {
-                PhotosPicker(selection: $selectedImageItem, matching: .images) {
-                    photoPicker
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 20) {
+                    PhotosPicker(selection: $selectedImageItem, matching: .images) {
+                        photoPicker
+                    }
+                    
+                    nameField
+                    dateField
+                    moodField
+                    observationsField
+                        .id(Field.observations)
                 }
-                
-                nameField
-                dateField
-                moodField
-                observationsField
+                .padding(20)
+                .background(Color.greenBg)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 40)
+                        .stroke(Color.greenBorder, lineWidth: 1)
+                )
+                .cornerRadius(40)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 120)
             }
-            .padding(20)
-            .background(Color.greenBg)
-            .overlay(
-                RoundedRectangle(cornerRadius: 40)
-                    .stroke(Color.greenBorder, lineWidth: 1)
-            )
-            .cornerRadius(40)
-            .padding(.horizontal, 20)
+            .onChange(of: focusedField) { field in
+                if let field = field {
+                    withAnimation {
+                        proxy.scrollTo(field, anchor: .center)
+                    }
+                }
+            }
         }
     }
     
@@ -262,6 +288,7 @@ struct AddVisitView: View {
                 .padding(.horizontal, 20)
                 .background(Color.greenLight)
                 .cornerRadius(20)
+                .focused($focusedField, equals: .observations)
         }
     }
     

@@ -4,6 +4,8 @@ import PhotosUI
 struct AddPointView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var locationManager = LocationManager.shared
+    @FocusState private var focusedField: Field?
+    @Namespace private var namespace
     
     let point: ForestPoint?
     
@@ -14,6 +16,11 @@ struct AddPointView: View {
     @State private var name = ""
     @State private var coordinates = ""
     @State private var showTypePicker = false
+    
+    enum Field: Hashable {
+        case name
+        case coordinates
+    }
     
     init(point: ForestPoint? = nil) {
         self.point = point
@@ -28,9 +35,16 @@ struct AddPointView: View {
             VStack(spacing: 0) {
                 headerSection
                 contentScrollView
-                saveButton
             }
             .bgSetup()
+            
+            VStack {
+                Spacer()
+                saveButton
+                    .padding(.bottom, 20)
+            }
+            .allowsHitTesting(true)
+            .ignoresSafeArea(.keyboard)
             
             typePickerOverlay
         }
@@ -106,26 +120,37 @@ struct AddPointView: View {
     }
     
     private var contentScrollView: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 20) {
-                PhotosPicker(selection: $selectedImageItem, matching: .images) {
-                    photoPicker
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 20) {
+                    PhotosPicker(selection: $selectedImageItem, matching: .images) {
+                        photoPicker
+                    }
+                    
+                    typePickerView
+                    
+                    nameInputField
+                        .id(Field.name)
+                    
+                    coordinatesInputField
+                        .id(Field.coordinates)
                 }
-                
-                typePickerView
-                
-                nameInputField
-                
-                coordinatesInputField
+                .padding(20)
+                .background(Color.greenBg)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 40)
+                        .stroke(Color.greenBorder, lineWidth: 1)
+                )
+                .cornerRadius(40)
+                .padding(.horizontal, 20)
             }
-            .padding(20)
-            .background(Color.greenBg)
-            .overlay(
-                RoundedRectangle(cornerRadius: 40)
-                    .stroke(Color.greenBorder, lineWidth: 1)
-            )
-            .cornerRadius(40)
-            .padding(.horizontal, 20)
+            .onChange(of: focusedField) { field in
+                if let field = field {
+                    withAnimation {
+                        proxy.scrollTo(field, anchor: .center)
+                    }
+                }
+            }
         }
     }
     
@@ -143,6 +168,7 @@ struct AddPointView: View {
                 .padding(.horizontal, 20)
                 .background(Color.greenLight)
                 .cornerRadius(20)
+                .focused($focusedField, equals: .name)
         }
     }
     
@@ -160,6 +186,7 @@ struct AddPointView: View {
                 .padding(.horizontal, 20)
                 .background(Color.greenLight)
                 .cornerRadius(20)
+                .focused($focusedField, equals: .coordinates)
         }
     }
     

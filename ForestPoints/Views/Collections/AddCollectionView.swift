@@ -3,12 +3,17 @@ import PhotosUI
 
 struct AddCollectionView: View {
     @Environment(\.dismiss) private var dismiss
+    @FocusState private var focusedField: Field?
     
     let collection: Collection?
     
     @State private var name = ""
     @State private var selectedImageData: Data?
     @State private var selectedImageItem: PhotosPickerItem?
+    
+    enum Field: Hashable {
+        case name
+    }
     
     init(collection: Collection? = nil) {
         self.collection = collection
@@ -23,9 +28,16 @@ struct AddCollectionView: View {
             VStack(spacing: 0) {
                 headerSection
                 contentScrollView
-                saveButton
             }
             .bgSetup()
+            
+            VStack {
+                Spacer()
+                saveButton
+                    .padding(.bottom, 20)
+            }
+            .allowsHitTesting(true)
+            .ignoresSafeArea(.keyboard)
         }
         .onAppear {
             if let collection = collection {
@@ -77,22 +89,33 @@ struct AddCollectionView: View {
     }
     
     private var contentScrollView: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 20) {
-                PhotosPicker(selection: $selectedImageItem, matching: .images) {
-                    photoPicker
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 20) {
+                    PhotosPicker(selection: $selectedImageItem, matching: .images) {
+                        photoPicker
+                    }
+                    
+                    titleInputField
+                        .id(Field.name)
                 }
-                
-                titleInputField
+                .padding(20)
+                .background(Color.greenBg)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 40)
+                        .stroke(Color.greenBorder, lineWidth: 1)
+                )
+                .cornerRadius(40)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 120)
             }
-            .padding(20)
-            .background(Color.greenBg)
-            .overlay(
-                RoundedRectangle(cornerRadius: 40)
-                    .stroke(Color.greenBorder, lineWidth: 1)
-            )
-            .cornerRadius(40)
-            .padding(.horizontal, 20)
+            .onChange(of: focusedField) { field in
+                if let field = field {
+                    withAnimation {
+                        proxy.scrollTo(field, anchor: .center)
+                    }
+                }
+            }
         }
     }
     
@@ -110,6 +133,7 @@ struct AddCollectionView: View {
                 .padding(.horizontal, 20)
                 .background(Color.greenLight)
                 .cornerRadius(20)
+                .focused($focusedField, equals: .name)
         }
     }
     
