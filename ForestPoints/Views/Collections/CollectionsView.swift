@@ -3,7 +3,6 @@ import SwiftUI
 struct CollectionsView: View {
     @State private var collections: [Collection] = []
     @State private var points: [ForestPoint] = []
-    @State private var showAddCollection = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -17,12 +16,6 @@ struct CollectionsView: View {
         }
         .onAppear {
             loadData()
-        }
-        .sheet(isPresented: $showAddCollection) {
-            AddCollectionView()
-                .onDisappear {
-                    loadData()
-                }
         }
     }
     
@@ -62,14 +55,17 @@ struct CollectionsView: View {
                 )
                 .padding(.horizontal, 16)
                 
-                Button {
-                    showAddCollection = true
-                } label: {
+                NavigationLink(destination: AddCollectionView()
+                    .onAppear {
+                        loadData()
+                    }
+                ) {
                     Image(.addButton)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 93, height: 93)
                 }
+                .buttonStyle(.plain)
             }
             
             Spacer()
@@ -84,7 +80,11 @@ struct CollectionsView: View {
                     GridItem(.flexible(), spacing: 8)
                 ], spacing: 8) {
                     ForEach(collections) { collection in
-                        NavigationLink(destination: CollectionDetailView(collection: collection)) {
+                        NavigationLink(destination: CollectionDetailView(collection: collection)
+                            .onAppear {
+                                loadData()
+                            }
+                        ) {
                             CollectionCardView(collection: collection)
                         }
                         .buttonStyle(.plain)
@@ -92,9 +92,11 @@ struct CollectionsView: View {
                 }
                 .padding(.horizontal, 16)
                 
-                Button {
-                    showAddCollection = true
-                } label: {
+                NavigationLink(destination: AddCollectionView()
+                    .onAppear {
+                        loadData()
+                    }
+                ) {
                     ZStack {
                         Image(.addView)
                             .resizable()
@@ -109,6 +111,7 @@ struct CollectionsView: View {
                     }
                     .frame(width: 150, height: 73)
                 }
+                .buttonStyle(.plain)
                 .padding(.bottom, 20)
             }
             .padding(.top, 20)
