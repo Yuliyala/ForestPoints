@@ -70,29 +70,40 @@ struct CollectionDetailView: View {
     }
 
     private var collectionDetailCard: some View {
-        NavigationLink(destination: AddCollectionView(collection: collection)) {
-            VStack(spacing: 8) {
-                collectionImage
-                    .padding(.top, 12)
-
-                Text(displayedPointName)
-                    .font(.signikaBold(size: 28))
-                    .foregroundColor(.white)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 12)
+        Group {
+            if let point = featuredPoint {
+                NavigationLink(destination: PointDetailView(point: point)) {
+                    cardContent
+                }
+                .buttonStyle(.plain)
+            } else {
+                cardContent
             }
-            .frame(width: 310, height: 220)
-            .background(
-                RoundedRectangle(cornerRadius: 40)
-                    .fill(Color.greenBg)
-            )
         }
         .contextMenu {
             Button("Delete Collection", role: .destructive) {
                 showDeleteAlert = true
             }
         }
+    }
+    
+    private var cardContent: some View {
+        VStack(spacing: 8) {
+            collectionImage
+                .padding(.top, 12)
+
+            Text(displayedPointName)
+                .font(.signikaBold(size: 28))
+                .foregroundColor(.white)
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 12)
+        }
+        .frame(width: 310, height: 220)
+        .background(
+            RoundedRectangle(cornerRadius: 40)
+                .fill(Color.greenBg)
+        )
     }
 
     private var collectionImage: some View {

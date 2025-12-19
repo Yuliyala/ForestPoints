@@ -87,6 +87,7 @@ struct CollectionsView: View {
                         NavigationLink(destination: CollectionDetailView(collection: collection)) {
                             CollectionCardView(collection: collection)
                         }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal, 16)
