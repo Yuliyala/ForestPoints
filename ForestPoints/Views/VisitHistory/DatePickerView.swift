@@ -11,8 +11,6 @@ struct DatePickerView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            headerSection
-            
             Spacer()
             
             datePickerSection
@@ -21,24 +19,6 @@ struct DatePickerView: View {
             
             confirmButton
         }
-    }
-    
-    private var headerSection: some View {
-        HStack(spacing: 16) {
-            Image(.closeButton)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 56, height: 56)
-                .opacity(0)
-            
-            Text("SELECT DATE")
-                .font(.signikaBold(size: 30))
-                .foregroundColor(.white)
-            
-            Spacer()
-        }
-        .padding(.horizontal, 16)
-        .padding(.top, 20)
     }
     
     private var datePickerSection: some View {

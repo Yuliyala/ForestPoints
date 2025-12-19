@@ -175,7 +175,6 @@ struct MarkAsPickerView: View {
                 get: { desiredDate ?? Date() },
                 set: { desiredDate = $0 }
             ))
-            .padding(.horizontal, 16)
             .onChange(of: desiredDate) { _ in
                 showDatePicker = false
             }
