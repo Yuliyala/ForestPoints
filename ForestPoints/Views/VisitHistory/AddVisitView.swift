@@ -29,7 +29,7 @@ struct AddVisitView: View {
     }
     
     var isFormValid: Bool {
-        !name.isEmpty && isMoodSelected && !observations.isEmpty
+        !name.isEmpty && isMoodSelected && !observations.isEmpty && selectedImageData != nil
     }
     
     var body: some View {

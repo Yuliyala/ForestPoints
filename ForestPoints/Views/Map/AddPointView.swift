@@ -26,7 +26,7 @@ struct AddPointView: View {
     }
     
     var isFormValid: Bool {
-        !name.isEmpty
+        !name.isEmpty && selectedImageData != nil
     }
     
     var body: some View {
