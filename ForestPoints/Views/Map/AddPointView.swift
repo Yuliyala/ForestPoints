@@ -139,6 +139,7 @@ struct AddPointView: View {
                 )
                 .cornerRadius(40)
                 .padding(.horizontal, 20)
+                .padding(.bottom, 120)
             }
             .onChange(of: focusedField) { field in
                 if let field = field {

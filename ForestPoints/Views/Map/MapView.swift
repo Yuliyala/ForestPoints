@@ -160,9 +160,8 @@ struct MapPinView: View {
             )
         }
         .buttonStyle(PlainButtonStyle())
-        .contentShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius))
-        .allowsHitTesting(true)
         .offset(y: -110)
+        .contentShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius))
         .zIndex(1000)
     }
     
@@ -175,7 +174,6 @@ struct MapPinView: View {
                 .scaledToFill()
                 .frame(width: Layout.imageWidth, height: Layout.imageHeight)
                 .clipShape(RoundedRectangle(cornerRadius: Layout.imageCornerRadius))
-                .allowsHitTesting(false)
         } else {
             RoundedRectangle(cornerRadius: Layout.imageCornerRadius)
                 .fill(Color.greenCard)
@@ -186,7 +184,6 @@ struct MapPinView: View {
                         .scaledToFit()
                         .frame(width: 50, height: 50)
                 )
-                .allowsHitTesting(false)
         }
     }
 }
