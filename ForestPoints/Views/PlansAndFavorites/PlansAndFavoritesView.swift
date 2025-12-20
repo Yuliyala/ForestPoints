@@ -21,12 +21,9 @@ struct PlansAndFavoritesView: View {
     }
     
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                headerSection
-                contentScrollView
-            }
-            .bgSetup()
+        VStack(spacing: 0) {
+            headerSection
+            contentScrollView
         }
         .navigationBarHidden(true)
         .onAppear(perform: loadPoints)

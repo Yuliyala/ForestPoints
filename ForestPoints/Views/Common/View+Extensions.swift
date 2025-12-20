@@ -5,11 +5,9 @@ extension View {
     func bgSetup() -> some View {
         self
             .background(
-                ZStack {
-                    Image(.appBg)
-                        .resizable()
-                        .ignoresSafeArea()
-                }.ignoreKeyboard()
+                Image(.appBg)
+                    .resizable()
+                    .ignoresSafeArea()
             )
             .navigationBarHidden(true)
     }
