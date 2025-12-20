@@ -1,7 +1,12 @@
 import SwiftUI
 import MapKit
 
+class MapState: ObservableObject {
+    @Published var selectedPointId: UUID?
+}
+
 struct MapView: View {
+    @StateObject private var mapState = MapState()
     @State private var points: [ForestPoint] = []
     @State private var showAddPoint = false
     @State private var region = MKCoordinateRegion(
@@ -16,15 +21,29 @@ struct MapView: View {
             VStack(spacing: 0) {
                 HeaderView(title: "Forest Points\nCatalog")
                 
-                Map(coordinateRegion: $region, annotationItems: points.filter { 
-                    let coords = $0.parseCoordinates()
-                    return coords.latitude != nil && coords.longitude != nil
-                }) { point in
-                    MapAnnotation(coordinate: point.coordinateForMap) {
-                        MapPinView(point: point)
+                ZStack {
+                    Map(coordinateRegion: $region, annotationItems: points.filter { 
+                        let coords = $0.parseCoordinates()
+                        return coords.latitude != nil && coords.longitude != nil
+                    }) { point in
+                        MapAnnotation(coordinate: point.coordinateForMap) {
+                            MapPinView(point: point, mapState: mapState)
+                        }
+                    }
+                    .frame(height: geometry.size.height < 650 ? 280 : 362)
+                    
+                    if mapState.selectedPointId != nil {
+                        Color.clear
+                            .frame(height: geometry.size.height < 650 ? 280 : 362)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                Task { @MainActor in
+                                    mapState.selectedPointId = nil
+                                }
+                            }
+                            .zIndex(1)
                     }
                 }
-                .frame(height: geometry.size.height < 650 ? 280 : 362)
                 .cornerRadius(20)
                 .padding(.top, 8)
                 
@@ -65,7 +84,7 @@ struct MapView: View {
 
 struct MapPinView: View {
     let point: ForestPoint
-    @State private var showDetail = false
+    @ObservedObject var mapState: MapState
     @State private var navigateToDetail = false
     
     private enum Layout {
@@ -79,37 +98,44 @@ struct MapPinView: View {
         static let pinHeight: CGFloat = 41
     }
     
-    var body: some View {
-        ZStack {
-            pinButton
-            
-            if showDetail {
-                detailCard
-            }
-        }
-        .background(
-            NavigationLink(
-                destination: PointDetailView(point: point),
-                isActive: $navigateToDetail
-            ) {
-                EmptyView()
-            }
-            .hidden()
-        )
+    private var isSelected: Bool {
+        mapState.selectedPointId == point.id
     }
     
-    private var pinButton: some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                showDetail.toggle()
+    var body: some View {
+        ZStack {
+            pinView
+            
+            if isSelected {
+                detailCard
+                    .background(
+                        NavigationLink(
+                            destination: PointDetailView(point: point),
+                            isActive: $navigateToDetail
+                        ) {
+                            EmptyView()
+                        }
+                        .hidden()
+                    )
             }
-        } label: {
-            Image(.pin)
-                .resizable()
-                .scaledToFit()
-                .frame(width: Layout.pinWidth, height: Layout.pinHeight)
         }
-        .accessibilityLabel("Pin for \(point.name)")
+    }
+    
+    private var pinView: some View {
+        Image(.pin)
+            .resizable()
+            .scaledToFit()
+            .frame(width: Layout.pinWidth, height: Layout.pinHeight)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                Task { @MainActor in
+                    if isSelected {
+                        mapState.selectedPointId = nil
+                    } else {
+                        mapState.selectedPointId = point.id
+                    }
+                }
+            }
     }
     
     private var detailCard: some View {
@@ -132,9 +158,12 @@ struct MapPinView: View {
                 RoundedRectangle(cornerRadius: Layout.cardCornerRadius)
                     .fill(Color.greenOverlay)
             )
-            .offset(y: -110)
-            .transition(.scale.combined(with: .opacity))
         }
+        .buttonStyle(PlainButtonStyle())
+        .contentShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius))
+        .allowsHitTesting(true)
+        .offset(y: -110)
+        .zIndex(1000)
     }
     
     @ViewBuilder
@@ -146,6 +175,7 @@ struct MapPinView: View {
                 .scaledToFill()
                 .frame(width: Layout.imageWidth, height: Layout.imageHeight)
                 .clipShape(RoundedRectangle(cornerRadius: Layout.imageCornerRadius))
+                .allowsHitTesting(false)
         } else {
             RoundedRectangle(cornerRadius: Layout.imageCornerRadius)
                 .fill(Color.greenCard)
@@ -156,7 +186,7 @@ struct MapPinView: View {
                         .scaledToFit()
                         .frame(width: 50, height: 50)
                 )
+                .allowsHitTesting(false)
         }
     }
 }
-
