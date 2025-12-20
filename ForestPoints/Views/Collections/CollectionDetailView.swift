@@ -5,6 +5,7 @@ struct CollectionDetailView: View {
 
     let collection: Collection
     @State private var showDeleteAlert = false
+    @State private var showEditCollection = false
     @State private var points: [ForestPoint] = []
     
     var body: some View {
@@ -38,6 +39,18 @@ struct CollectionDetailView: View {
         }
         .onAppear(perform: loadPoints)
         .overlay(deleteAlertOverlay)
+        .background(
+            NavigationLink(
+                destination: AddCollectionView(collection: collection)
+                    .onDisappear {
+                        loadPoints()
+                    },
+                isActive: $showEditCollection
+            ) {
+                EmptyView()
+            }
+            .hidden()
+        )
     }
     
     private var backButton: some View {
@@ -121,6 +134,9 @@ struct CollectionDetailView: View {
                 .fill(Color.greenBg)
         )
         .contextMenu {
+            Button("Edit Collection") {
+                showEditCollection = true
+            }
             Button("Delete Collection", role: .destructive) {
                 showDeleteAlert = true
             }

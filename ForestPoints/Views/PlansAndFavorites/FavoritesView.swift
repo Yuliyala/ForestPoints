@@ -9,17 +9,15 @@ struct FavoritesView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                VStack(spacing: 0) {
-                    headerSection
-                    contentScrollView
-                }
-                .bgSetup()
+        ZStack {
+            VStack(spacing: 0) {
+                headerSection
+                contentScrollView
             }
-            .navigationBarHidden(true)
-            .onAppear(perform: loadPoints)
+            .bgSetup()
         }
+        .navigationBarHidden(true)
+        .onAppear(perform: loadPoints)
     }
     
     private var headerSection: some View {

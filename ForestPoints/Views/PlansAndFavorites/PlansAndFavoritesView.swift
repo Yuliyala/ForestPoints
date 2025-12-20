@@ -2,7 +2,6 @@ import SwiftUI
 
 struct PlansAndFavoritesView: View {
     @State private var points: [ForestPoint] = []
-    @State private var showFavorites = false
     
     var upcomingVisits: [ForestPoint] {
         points.filter { $0.markAsType != nil || $0.isFavourite }
@@ -22,20 +21,15 @@ struct PlansAndFavoritesView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                VStack(spacing: 0) {
-                    headerSection
-                    contentScrollView
-                }
-                .bgSetup()
+        ZStack {
+            VStack(spacing: 0) {
+                headerSection
+                contentScrollView
             }
-            .navigationBarHidden(true)
-            .onAppear(perform: loadPoints)
-            .sheet(isPresented: $showFavorites) {
-                FavoritesView()
-            }
+            .bgSetup()
         }
+        .navigationBarHidden(true)
+        .onAppear(perform: loadPoints)
     }
     
     private var headerSection: some View {
@@ -56,14 +50,17 @@ struct PlansAndFavoritesView: View {
                 )
             }
    
-            Button(action: {
-                showFavorites = true
-            }) {
+            NavigationLink(destination: FavoritesView()
+                .onAppear {
+                    loadPoints()
+                }
+            ) {
                 Image(.heartIcon)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 100, height: 100)
             }
+            .buttonStyle(.plain)
         }
         .padding(.horizontal, 16)
         .padding(.top, 20)
