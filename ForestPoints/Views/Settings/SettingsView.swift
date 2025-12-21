@@ -28,15 +28,20 @@ struct SettingsView: View {
                 remindersEnabled.toggle()
             }
 
-            settingsRow(
-                title: "About the App",
-                accessory: {
-                    Image(.navigate)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 57, height: 55)
-                }
-            )
+            NavigationLink {
+                WebViewScreenView(url: URL(string: "https://www.google.com")!)
+            } label: {
+                settingsRow(
+                    title: "About the App",
+                    accessory: {
+                        Image(.navigate)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 57, height: 55)
+                    }
+                )
+            }
+
         }
         .padding(.vertical, 24)
         .padding(.horizontal, 16)
