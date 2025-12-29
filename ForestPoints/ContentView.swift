@@ -1,9 +1,3 @@
-//
-//  ContentView.swift
-//  ForestPoints
-//
-//  Created by Yuliya Lapenak on 12/14/25.
-//
 
 import SwiftUI
 
@@ -14,6 +8,7 @@ struct ContentView: View {
                 .imageScale(.large)
                 .foregroundStyle(.tint)
             Text("Hello, world!")
+                .font(.signikaBold(size: 24))
         }
         .padding()
     }
